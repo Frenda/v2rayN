@@ -19,6 +19,7 @@ using ZXing.Common;
 using ZXing.QrCode;
 using System.Security.Principal;
 using v2rayN.Base;
+using Newtonsoft.Json.Linq;
 
 namespace v2rayN
 {
@@ -119,16 +120,22 @@ namespace v2rayN
         /// <param name="obj"></param>
         /// <param name="filePath"></param>
         /// <returns></returns>
-        public static int ToJsonFile(Object obj, string filePath)
+        public static int ToJsonFile(Object obj, string filePath, bool nullValue = true)
         {
             int result;
             try
             {
                 using (StreamWriter file = File.CreateText(filePath))
                 {
-                    //JsonSerializer serializer = new JsonSerializer();
-                    JsonSerializer serializer = new JsonSerializer() { Formatting = Formatting.Indented };
-                    //JsonSerializer serializer = new JsonSerializer() { Formatting = Formatting.Indented, NullValueHandling = NullValueHandling.Ignore };
+                    JsonSerializer serializer;
+                    if (nullValue)
+                    {
+                        serializer = new JsonSerializer() { Formatting = Formatting.Indented };
+                    }
+                    else
+                    {
+                        serializer = new JsonSerializer() { Formatting = Formatting.Indented, NullValueHandling = NullValueHandling.Ignore };
+                    }
 
                     serializer.Serialize(file, obj);
                 }
@@ -139,6 +146,19 @@ namespace v2rayN
                 result = -1;
             }
             return result;
+        }
+
+        public static JObject ParseJson(string strJson)
+        {
+            try
+            {
+                JObject obj = JObject.Parse(strJson);
+                return obj;
+            }
+            catch
+            {
+                return null;
+            }
         }
         #endregion
 
@@ -800,7 +820,7 @@ namespace v2rayN
         public static string GetTempPath(string filename)
         {
             return Path.Combine(GetTempPath(), filename);
-        }              
+        }
 
         public static string UnGzip(byte[] buf)
         {

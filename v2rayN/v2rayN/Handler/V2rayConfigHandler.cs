@@ -84,7 +84,7 @@ namespace v2rayN.Handler
                 // TODO: 统计配置
                 statistic(config, ref v2rayConfig);
 
-                Utils.ToJsonFile(v2rayConfig, fileName);
+                Utils.ToJsonFile(v2rayConfig, fileName, false);
 
                 msg = string.Format(UIRes.I18N("SuccessfulConfiguration"), config.getSummary());
             }
@@ -166,6 +166,13 @@ namespace v2rayN.Handler
                 //开启udp
                 inbound.settings.udp = config.inbound[0].udpEnabled;
                 inbound.sniffing.enabled = config.inbound[0].sniffingEnabled;
+
+                //http
+                Inbounds inbound2 = v2rayConfig.inbounds[1];
+                inbound2.port = config.GetLocalPort(Global.InboundHttp);
+                inbound2.protocol = Global.InboundHttp;
+                inbound2.listen = inbound.listen;
+                inbound2.settings.allowTransparent = false;
             }
             catch
             {
@@ -188,31 +195,10 @@ namespace v2rayN.Handler
                 {
                     v2rayConfig.routing.domainStrategy = config.domainStrategy;
 
-                    //自定义
-                    //需代理
-                    routingUserRule(config.useragent, Global.agentTag, ref v2rayConfig);
-                    //直连
-                    routingUserRule(config.userdirect, Global.directTag, ref v2rayConfig);
-                    //阻止
-                    routingUserRule(config.userblock, Global.blockTag, ref v2rayConfig);
-
-
-                    switch (config.routingMode)
+                    foreach (var item in config.routingItem)
                     {
-                        case "0":
-                            break;
-                        case "1":
-                            routingGeo("ip", "private", Global.directTag, ref v2rayConfig);
-                            break;
-                        case "2":
-                            routingGeo("", "cn", Global.directTag, ref v2rayConfig);
-                            break;
-                        case "3":
-                            routingGeo("ip", "private", Global.directTag, ref v2rayConfig);
-                            routingGeo("", "cn", Global.directTag, ref v2rayConfig);
-                            break;
+                        routingUserRule(item.userRules, item.outboundTag, ref v2rayConfig);
                     }
-
                 }
             }
             catch
@@ -224,8 +210,19 @@ namespace v2rayN.Handler
         {
             try
             {
-                if (userRule != null
-                    && userRule.Count > 0)
+                if (userRule == null)
+                {
+                }
+                else if (userRule.Count == 0)
+                {
+                    v2rayConfig.routing.rules.Add(new RulesItem
+                    {
+                        type = "field",
+                        outboundTag = tag,
+                        port = "0-65535"
+                    });
+                }
+                else if (userRule.Count > 0)
                 {
                     //Domain
                     RulesItem rulesDomain = new RulesItem
@@ -270,46 +267,6 @@ namespace v2rayN.Handler
                     if (rulesIP.ip.Count > 0)
                     {
                         v2rayConfig.routing.rules.Add(rulesIP);
-                    }
-                }
-            }
-            catch
-            {
-            }
-            return 0;
-        }
-
-
-        private static int routingGeo(string ipOrDomain, string code, string tag, ref V2rayConfig v2rayConfig)
-        {
-            try
-            {
-                if (!Utils.IsNullOrEmpty(code))
-                {
-                    //IP
-                    if (ipOrDomain == "ip" || ipOrDomain == "")
-                    {
-                        RulesItem rulesItem = new RulesItem
-                        {
-                            type = "field",
-                            outboundTag = Global.directTag,
-                            ip = new List<string>()
-                        };
-                        rulesItem.ip.Add($"geoip:{code}");
-
-                        v2rayConfig.routing.rules.Add(rulesItem);
-                    }
-
-                    if (ipOrDomain == "domain" || ipOrDomain == "")
-                    {
-                        RulesItem rulesItem = new RulesItem
-                        {
-                            type = "field",
-                            outboundTag = Global.directTag,
-                            domain = new List<string>()
-                        };
-                        rulesItem.domain.Add($"geosite:{code}");
-                        v2rayConfig.routing.rules.Add(rulesItem);
                     }
                 }
             }
@@ -470,7 +427,7 @@ namespace v2rayN.Handler
                     usersItem.flow = string.Empty;
                     usersItem.email = Global.userEMail;
                     usersItem.encryption = config.security();
-                    
+
                     //Mux
                     outbound.mux.enabled = config.muxEnabled;
                     outbound.mux.concurrency = config.muxEnabled ? 8 : -1;
@@ -490,7 +447,7 @@ namespace v2rayN.Handler
                         {
                             usersItem.flow = config.flow();
                         }
-                        
+
                         outbound.mux.enabled = false;
                         outbound.mux.concurrency = -1;
                     }
@@ -625,7 +582,6 @@ namespace v2rayN.Handler
                     case "ws":
                         WsSettings wsSettings = new WsSettings
                         {
-                            connectionReuse = true
                         };
 
                         string path = config.path();
@@ -689,7 +645,6 @@ namespace v2rayN.Handler
                         {
                             TcpSettings tcpSettings = new TcpSettings
                             {
-                                connectionReuse = true,
                                 header = new Header
                                 {
                                     type = config.headerType()
@@ -746,21 +701,30 @@ namespace v2rayN.Handler
                 {
                     return 0;
                 }
-                List<string> servers = new List<string>();
 
-                string[] arrDNS = config.remoteDNS.Split(',');
-                foreach (string str in arrDNS)
+                var obj = Utils.ParseJson(config.remoteDNS);
+                if (obj != null && obj.ContainsKey("servers"))
                 {
-                    //if (Utils.IsIP(str))
-                    //{
-                    servers.Add(str);
-                    //}
+                    v2rayConfig.dns = obj;
                 }
-                //servers.Add("localhost");
-                v2rayConfig.dns = new Mode.Dns
+                else
                 {
-                    servers = servers
-                };
+                    List<string> servers = new List<string>();
+
+                    string[] arrDNS = config.remoteDNS.Split(',');
+                    foreach (string str in arrDNS)
+                    {
+                        //if (Utils.IsIP(str))
+                        //{
+                        servers.Add(str);
+                        //}
+                    }
+                    //servers.Add("localhost");
+                    v2rayConfig.dns = new Mode.Dns
+                    {
+                        servers = servers
+                    };
+                }
             }
             catch
             {
@@ -785,8 +749,8 @@ namespace v2rayN.Handler
                 apiObj.services = services.ToList();
                 v2rayConfig.api = apiObj;
 
-                policySystemSetting.statsInboundDownlink = true;
-                policySystemSetting.statsInboundUplink = true;
+                policySystemSetting.statsOutboundDownlink = true;
+                policySystemSetting.statsOutboundUplink = true;
                 policyObj.system = policySystemSetting;
                 v2rayConfig.policy = policyObj;
 
@@ -919,7 +883,7 @@ namespace v2rayN.Handler
                 //传出设置
                 ServerOutbound(config, ref v2rayConfig);
 
-                Utils.ToJsonFile(v2rayConfig, fileName);
+                Utils.ToJsonFile(v2rayConfig, fileName, false);
 
                 msg = string.Format(UIRes.I18N("SuccessfulConfiguration"), config.getSummary());
             }
@@ -1452,7 +1416,7 @@ namespace v2rayN.Handler
                     else
                     {
                         vmessItem.remarks = WebUtility.UrlDecode(remarks);
-                    }                     
+                    }
                 }
                 else
                 {
@@ -1745,7 +1709,7 @@ namespace v2rayN.Handler
                 //routing(config, ref v2rayConfig);
                 dns(configCopy, ref v2rayConfig);
 
-                v2rayConfig.inbounds.RemoveAt(0); // Remove "proxy" service for speedtest, avoiding port conflicts.
+                v2rayConfig.inbounds.Clear(); // Remove "proxy" service for speedtest, avoiding port conflicts.
 
                 int httpPort = configCopy.GetLocalPort("speedtest");
                 foreach (int index in selecteds)
