@@ -120,6 +120,8 @@ namespace v2rayN.Forms
                     break;
             }
 
+            chkIgnoreGeoUpdateCore.Checked = config.ignoreGeoUpdateCore;
+            cmbCoreType.SelectedIndex = (int)config.coreType;
         }
         private void btnOK_Click(object sender, EventArgs e)
         {
@@ -284,6 +286,8 @@ namespace v2rayN.Forms
             config.statisticsFreshRate = (int)cbFreshrate.SelectedValue;
             config.keepOlderDedupl = chkKeepOlderDedupl.Checked;
 
+            config.ignoreGeoUpdateCore = chkIgnoreGeoUpdateCore.Checked;
+            config.coreType = (ECoreType)cmbCoreType.SelectedIndex;
 
             return 0;
         }

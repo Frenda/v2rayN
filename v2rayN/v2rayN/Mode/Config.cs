@@ -61,13 +61,6 @@ namespace v2rayN.Mode
         }
 
         /// <summary>
-        /// 域名解析策略
-        /// </summary>
-        public string domainStrategy
-        {
-            get; set;
-        }
-        /// <summary>
         /// KcpItem
         /// </summary>
         public KcpItem kcpItem
@@ -96,7 +89,7 @@ namespace v2rayN.Mode
         public string speedPingTestUrl
         {
             get; set;
-        }        
+        }
 
         /// <summary>
         /// 允许来自局域网的连接
@@ -161,7 +154,31 @@ namespace v2rayN.Mode
         {
             get; set;
         }
-        public List<RoutingItem> routingItem
+        /// <summary>
+        /// 域名解析策略
+        /// </summary>
+        public string domainStrategy
+        {
+            get; set;
+        }
+        public int routingIndex
+        {
+            get; set;
+        }
+        public List<RoutingItem> routings
+        {
+            get; set;
+        }
+        public bool enableRoutingAdvanced
+        {
+            get; set;
+        }
+
+        public ECoreType coreType
+        {
+            get; set;
+        }
+        public bool ignoreGeoUpdateCore
         {
             get; set;
         }
@@ -276,7 +293,7 @@ namespace v2rayN.Mode
             {
                 return GetLocalPort(Global.InboundSocks) + 1;
             }
-           
+
             else if (protocol == "speedtest")
             {
                 return GetLocalPort(Global.InboundSocks) + 103;
@@ -328,6 +345,14 @@ namespace v2rayN.Mode
                 return string.Empty;
             }
             return vmess[index].flow.TrimEx();
+        }
+        public string sni()
+        {
+            if (index < 0)
+            {
+                return string.Empty;
+            }
+            return vmess[index].sni.TrimEx();
         }
         #endregion
 
@@ -555,6 +580,13 @@ namespace v2rayN.Mode
         {
             get; set;
         }
+        /// <summary>
+        /// tls sni
+        /// </summary>
+        public string sni
+        {
+            get; set;
+        }
     }
 
     [Serializable]
@@ -689,34 +721,6 @@ namespace v2rayN.Mode
         }
 
         public Dictionary<string, int> mainLvColWidth
-        {
-            get; set;
-        }
-    }
-
-    [Serializable]
-    public class RoutingItem
-    {
-        /// <summary>
-        /// 
-        /// </summary>
-        public string remarks
-        {
-            get; set;
-        }
-         
-        /// <summary>
-        /// 
-        /// </summary>
-        public string outboundTag
-        {
-            get; set;
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public List<string> userRules
         {
             get; set;
         }
