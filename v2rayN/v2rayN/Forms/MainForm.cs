@@ -296,25 +296,56 @@ namespace v2rayN.Forms
         private void RefreshServersMenu()
         {
             menuServers.DropDownItems.Clear();
+            menuServers2.SelectedIndexChanged -= MenuServers2_SelectedIndexChanged;
+            menuServers2.Items.Clear();
+            menuServers.Visible = false;
+            menuServers2.Visible = false;
 
-            List<ToolStripMenuItem> lst = new List<ToolStripMenuItem>();
-            for (int k = 0; k < config.vmess.Count; k++)
+            if (config.vmess.Count > 20)
             {
-                VmessItem item = config.vmess[k];
-                string name = item.getSummary();
+                for (int k = 0; k < config.vmess.Count; k++)
+                {
+                    VmessItem item = config.vmess[k];
+                    string name = item.getSummary();
 
-                ToolStripMenuItem ts = new ToolStripMenuItem(name)
-                {
-                    Tag = k
-                };
-                if (config.index.Equals(k))
-                {
-                    ts.Checked = true;
+                    if (config.index.Equals(k))
+                    {
+                        name = $"√ {name}";
+                    }
+                    menuServers2.Items.Add(name);
+
                 }
-                ts.Click += new EventHandler(ts_Click);
-                lst.Add(ts);
+                menuServers2.SelectedIndex = config.index;
+                menuServers2.SelectedIndexChanged += MenuServers2_SelectedIndexChanged;
+                menuServers2.Visible = true;
             }
-            menuServers.DropDownItems.AddRange(lst.ToArray());
+            else
+            {
+                List<ToolStripMenuItem> lst = new List<ToolStripMenuItem>();
+                for (int k = 0; k < config.vmess.Count; k++)
+                {
+                    VmessItem item = config.vmess[k];
+                    string name = item.getSummary();
+
+                    ToolStripMenuItem ts = new ToolStripMenuItem(name)
+                    {
+                        Tag = k
+                    };
+                    if (config.index.Equals(k))
+                    {
+                        ts.Checked = true;
+                    }
+                    ts.Click += new EventHandler(ts_Click);
+                    lst.Add(ts);
+                }
+                menuServers.DropDownItems.AddRange(lst.ToArray());
+                menuServers.Visible = true;
+            }
+        }
+
+        private void MenuServers2_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            SetDefaultServer(((ToolStripComboBox)sender).SelectedIndex);
         }
 
         private void ts_Click(object sender, EventArgs e)
@@ -352,8 +383,8 @@ namespace v2rayN.Forms
 
         private void DisplayToolStatus()
         {
-            toolSslSocksPort.Text = $"{Global.Loopback}:{config.inbound[0].localPort}";
-            toolSslHttpPort.Text = $"{Global.Loopback}:{Global.httpPort}";
+            toolSslInboundInfo.Text = $"{Global.InboundSocks} {Global.Loopback}:{config.inbound[0].localPort} | "
+             + $"{ Global.InboundHttp} { Global.Loopback}:{Global.httpPort}";
 
             notifyMain.Icon = MainFormHandler.Instance.GetNotifyIcon(config, this.Icon);
         }
@@ -578,24 +609,18 @@ namespace v2rayN.Forms
             {
                 return;
             }
-            for (int k = lvSelecteds.Count - 1; k >= 0; k--)
-            {
-                ConfigHandler.RemoveServer(ref config, lvSelecteds[k]);
-            }
+
+            ConfigHandler.RemoveServer(ref config, lvSelecteds);
+
             RefreshServers();
             LoadV2ray();
-
         }
 
         private void menuRemoveDuplicateServer_Click(object sender, EventArgs e)
         {
-            Utils.DedupServerList(config.vmess, out List<VmessItem> servers, config.keepOlderDedupl);
             int oldCount = config.vmess.Count;
-            int newCount = servers.Count;
-            if (servers != null)
-            {
-                config.vmess = servers;
-            }
+            ConfigHandler.DedupServerList(ref config);
+            int newCount = config.vmess.Count;
             RefreshServers();
             LoadV2ray();
             UI.Show(string.Format(UIRes.I18N("RemoveDuplicateServerResult"), oldCount, newCount));
@@ -1395,6 +1420,7 @@ namespace v2rayN.Forms
             menuRoutings.Visible = config.enableRoutingAdvanced;
             if (!config.enableRoutingAdvanced)
             {
+                toolSslRoutingRule.Text = string.Empty;
                 return;
             }
 
@@ -1417,6 +1443,7 @@ namespace v2rayN.Forms
                 if (config.routingIndex.Equals(k))
                 {
                     ts.Checked = true;
+                    toolSslRoutingRule.Text = item.remarks;
                 }
                 ts.Click += new EventHandler(ts_Routing_Click);
                 lst.Add(ts);
