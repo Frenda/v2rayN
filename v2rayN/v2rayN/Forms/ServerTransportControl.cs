@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
 using v2rayN.Mode;
+using v2rayN.Resx;
 
 namespace v2rayN.Forms
 {
@@ -20,6 +22,8 @@ namespace v2rayN.Forms
         private void Init(VmessItem item)
         {
             vmessItem = item;
+
+            cmbNetwork.Items.AddRange(Global.networks.ToArray());
 
             cmbStreamSecurity.Items.Clear();
             cmbStreamSecurity.Items.Add(string.Empty);
@@ -41,6 +45,17 @@ namespace v2rayN.Forms
             cmbStreamSecurity.Text = vmessItem.streamSecurity;
             cmbAllowInsecure.Text = vmessItem.allowInsecure;
             txtSNI.Text = vmessItem.sni;
+
+            if (vmessItem.alpn != null)
+            {
+                for (int i = 0; i < clbAlpn.Items.Count; i++)
+                {
+                    if (vmessItem.alpn.Contains(clbAlpn.Items[i].ToString()))
+                    {
+                        clbAlpn.SetItemChecked(i, true);
+                    }
+                }
+            }
         }
 
         public void ClearServer(VmessItem item)
@@ -54,6 +69,10 @@ namespace v2rayN.Forms
             cmbAllowInsecure.Text = "";
             txtPath.Text = "";
             txtSNI.Text = "";
+            for (int i = 0; i < clbAlpn.Items.Count; i++)
+            {
+                clbAlpn.SetItemChecked(i, false);
+            }
         }
 
         public void EndBindingServer()
@@ -73,6 +92,16 @@ namespace v2rayN.Forms
             vmessItem.streamSecurity = streamSecurity;
             vmessItem.allowInsecure = allowInsecure;
             vmessItem.sni = sni;
+
+            var alpn = new List<string>();
+            for (int i = 0; i < clbAlpn.Items.Count; i++)
+            {
+                if (clbAlpn.GetItemChecked(i))
+                {
+                    alpn.Add(clbAlpn.Items[i].ToString());
+                }
+            }
+            vmessItem.alpn = alpn;
         }
 
         private void cmbNetwork_SelectedIndexChanged(object sender, EventArgs e)
@@ -100,11 +129,7 @@ namespace v2rayN.Forms
             else if (network.Equals("kcp") || network.Equals("quic"))
             {
                 cmbHeaderType.Items.Add(Global.None);
-                cmbHeaderType.Items.Add("srtp");
-                cmbHeaderType.Items.Add("utp");
-                cmbHeaderType.Items.Add("wechat-video");
-                cmbHeaderType.Items.Add("dtls");
-                cmbHeaderType.Items.Add("wireguard");
+                cmbHeaderType.Items.AddRange(Global.kcpHeaderTypes.ToArray());
             }
             else if (network.Equals("grpc"))
             {
@@ -132,33 +157,34 @@ namespace v2rayN.Forms
 
             if (network.Equals(Global.DefaultNetwork))
             {
-                tipRequestHost.Text = UIRes.I18N("TransportRequestHostTip1");
-                tipHeaderType.Text = UIRes.I18N("TransportHeaderTypeTip1");
+                tipRequestHost.Text = ResUI.TransportRequestHostTip1;
+                tipHeaderType.Text = ResUI.TransportHeaderTypeTip1;
             }
             else if (network.Equals("kcp"))
             {
-                tipHeaderType.Text = UIRes.I18N("TransportHeaderTypeTip2");
+                tipHeaderType.Text = ResUI.TransportHeaderTypeTip2;
+                tipPath.Text = ResUI.TransportPathTip5;                
             }
             else if (network.Equals("ws"))
             {
-                tipRequestHost.Text = UIRes.I18N("TransportRequestHostTip2");
-                tipPath.Text = UIRes.I18N("TransportPathTip1");
+                tipRequestHost.Text = ResUI.TransportRequestHostTip2;
+                tipPath.Text = ResUI.TransportPathTip1;
             }
             else if (network.Equals("h2"))
             {
-                tipRequestHost.Text = UIRes.I18N("TransportRequestHostTip3");
-                tipPath.Text = UIRes.I18N("TransportPathTip2");
+                tipRequestHost.Text = ResUI.TransportRequestHostTip3;
+                tipPath.Text = ResUI.TransportPathTip2;
             }
             else if (network.Equals("quic"))
             {
-                tipRequestHost.Text = UIRes.I18N("TransportRequestHostTip4");
-                tipPath.Text = UIRes.I18N("TransportPathTip3");
-                tipHeaderType.Text = UIRes.I18N("TransportHeaderTypeTip3");
+                tipRequestHost.Text = ResUI.TransportRequestHostTip4;
+                tipPath.Text = ResUI.TransportPathTip3;
+                tipHeaderType.Text = ResUI.TransportHeaderTypeTip3;
             }
             else if (network.Equals("grpc"))
             {
-                tipPath.Text = UIRes.I18N("TransportPathTip4");
-                tipHeaderType.Text = UIRes.I18N("TransportHeaderTypeTip4");
+                tipPath.Text = ResUI.TransportPathTip4;
+                tipHeaderType.Text = ResUI.TransportHeaderTypeTip4;
                 labHeaderType.Visible = false;
             }
         }

@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Windows.Forms;
-using v2rayN.Handler;
 using v2rayN.Base;
-using v2rayN.HttpProxyHandler;
+using v2rayN.Handler;
 using v2rayN.Mode;
+using v2rayN.Resx;
 
 namespace v2rayN.Forms
 {
@@ -22,6 +23,8 @@ namespace v2rayN.Forms
             InitKCP();
 
             InitGUI();
+
+            InitCoreType();
         }
 
         /// <summary>
@@ -99,9 +102,9 @@ namespace v2rayN.Forms
 
             ComboItem[] cbSource = new ComboItem[]
             {
-                new ComboItem{ID = (int)Global.StatisticsFreshRate.quick, Text = UIRes.I18N("QuickFresh")},
-                new ComboItem{ID = (int)Global.StatisticsFreshRate.medium, Text = UIRes.I18N("MediumFresh")},
-                new ComboItem{ID = (int)Global.StatisticsFreshRate.slow, Text = UIRes.I18N("SlowFresh")},
+                new ComboItem{ID = (int)Global.StatisticsFreshRate.quick, Text = ResUI.QuickFresh},
+                new ComboItem{ID = (int)Global.StatisticsFreshRate.medium, Text = ResUI.MediumFresh},
+                new ComboItem{ID = (int)Global.StatisticsFreshRate.slow, Text = ResUI.SlowFresh},
             };
             cbFreshrate.DataSource = cbSource;
 
@@ -122,9 +125,40 @@ namespace v2rayN.Forms
             }
 
             chkIgnoreGeoUpdateCore.Checked = config.ignoreGeoUpdateCore;
-            cmbCoreType.SelectedIndex = (int)config.coreType;
             txtautoUpdateInterval.Text = config.autoUpdateInterval.ToString();
+            chkEnableAutoAdjustMainLvColWidth.Checked = config.uiItem.enableAutoAdjustMainLvColWidth;
+            chkEnableSecurityProtocolTls13.Checked = config.enableSecurityProtocolTls13;
         }
+
+        private void InitCoreType()
+        {
+            if (config.coreTypeItem == null)
+            {
+                config.coreTypeItem = new List<CoreTypeItem>();
+            }
+
+            foreach (EConfigType it in Enum.GetValues(typeof(EConfigType)))
+            {
+                if (config.coreTypeItem.FindIndex(t => t.configType == it) >= 0)
+                {
+                    continue;
+                }
+
+                config.coreTypeItem.Add(new CoreTypeItem()
+                {
+                    configType = it,
+                    coreType = ECoreType.Xray
+                });
+            }
+            for (int k = 1; k <= config.coreTypeItem.Count; k++)
+            {
+                var item = config.coreTypeItem[k - 1];
+                ((ComboBox)tabPageCoreType.Controls[$"cmbCoreType{k}"]).Items.AddRange(Global.coreTypes.ToArray());
+                tabPageCoreType.Controls[$"labCoreType{k}"].Text = item.configType.ToString();
+                tabPageCoreType.Controls[$"cmbCoreType{k}"].Text = item.coreType.ToString();
+            }
+        }
+
         private void btnOK_Click(object sender, EventArgs e)
         {
             if (SaveBase() != 0)
@@ -143,13 +177,18 @@ namespace v2rayN.Forms
                 return;
             }
 
+            if (SaveCoreType() != 0)
+            {
+                return;
+            }
+
             if (ConfigHandler.SaveConfig(ref config) == 0)
             {
                 this.DialogResult = DialogResult.OK;
             }
             else
             {
-                UI.ShowWarning(UIRes.I18N("OperationFailed"));
+                UI.ShowWarning(ResUI.OperationFailed);
             }
         }
 
@@ -173,12 +212,12 @@ namespace v2rayN.Forms
             bool sniffingEnabled = chksniffingEnabled.Checked;
             if (Utils.IsNullOrEmpty(localPort) || !Utils.IsNumberic(localPort))
             {
-                UI.Show(UIRes.I18N("FillLocalListeningPort"));
+                UI.Show(ResUI.FillLocalListeningPort);
                 return -1;
             }
             if (Utils.IsNullOrEmpty(protocol))
             {
-                UI.Show(UIRes.I18N("PleaseSelectProtocol"));
+                UI.Show(ResUI.PleaseSelectProtocol);
                 return -1;
             }
 
@@ -191,7 +230,7 @@ namespace v2rayN.Forms
             {
                 if (remoteDNS.Contains("{") || remoteDNS.Contains("}"))
                 {
-                    UI.Show(UIRes.I18N("FillCorrectDNSText"));
+                    UI.Show(ResUI.FillCorrectDNSText);
                     return -1;
                 }
             }
@@ -210,12 +249,12 @@ namespace v2rayN.Forms
             {
                 if (Utils.IsNullOrEmpty(localPort2) || !Utils.IsNumberic(localPort2))
                 {
-                    UI.Show(UIRes.I18N("FillLocalListeningPort"));
+                    UI.Show(ResUI.FillLocalListeningPort);
                     return -1;
                 }
                 if (Utils.IsNullOrEmpty(protocol2))
                 {
-                    UI.Show(UIRes.I18N("PleaseSelectProtocol"));
+                    UI.Show(ResUI.PleaseSelectProtocol);
                     return -1;
                 }
                 if (config.inbound.Count < 2)
@@ -274,7 +313,7 @@ namespace v2rayN.Forms
                 || Utils.IsNullOrEmpty(readBufferSize) || !Utils.IsNumberic(readBufferSize)
                 || Utils.IsNullOrEmpty(writeBufferSize) || !Utils.IsNumberic(writeBufferSize))
             {
-                UI.Show(UIRes.I18N("FillKcpParameters"));
+                UI.Show(ResUI.FillKcpParameters);
                 return -1;
             }
             config.kcpItem.mtu = Utils.ToInt(mtu);
@@ -305,8 +344,20 @@ namespace v2rayN.Forms
             config.keepOlderDedupl = chkKeepOlderDedupl.Checked;
 
             config.ignoreGeoUpdateCore = chkIgnoreGeoUpdateCore.Checked;
-            config.coreType = (ECoreType)cmbCoreType.SelectedIndex;
             config.autoUpdateInterval = Utils.ToInt(txtautoUpdateInterval.Text);
+            config.uiItem.enableAutoAdjustMainLvColWidth = chkEnableAutoAdjustMainLvColWidth.Checked;
+            config.enableSecurityProtocolTls13 = chkEnableSecurityProtocolTls13.Checked;
+
+            return 0;
+        }
+
+        private int SaveCoreType()
+        {
+            for (int k = 1; k <= config.coreTypeItem.Count; k++)
+            {
+                var item = config.coreTypeItem[k - 1];
+                item.coreType = (ECoreType)Enum.Parse(typeof(ECoreType), tabPageCoreType.Controls[$"cmbCoreType{k}"].Text);
+            }
 
             return 0;
         }
@@ -330,7 +381,12 @@ namespace v2rayN.Forms
 
         private void linkDnsObjectDoc_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            System.Diagnostics.Process.Start("https://www.v2fly.org/config/dns.html#dnsobject");
+            Process.Start("https://www.v2fly.org/config/dns.html#dnsobject");
+        }
+
+        private void btnSetLoopback_Click(object sender, EventArgs e)
+        {
+            Process.Start(Utils.GetPath("EnableLoopback.exe"));
         }
     }
 }
