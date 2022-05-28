@@ -6,6 +6,7 @@ using v2rayN.Mode;
 using v2rayN.Base;
 using System.Linq;
 using v2rayN.Tool;
+using System.Threading.Tasks;
 
 namespace v2rayN.Handler
 {
@@ -15,7 +16,7 @@ namespace v2rayN.Handler
     class ConfigHandler
     {
         private static string configRes = Global.ConfigFileName;
-        private static object objLock = new object();
+        private static readonly object objLock = new object();
 
         #region ConfigHandler
 
@@ -207,7 +208,28 @@ namespace v2rayN.Handler
         {
             lock (objLock)
             {
-                Utils.ToJsonFile(config, Utils.GetPath(configRes));
+                try
+                {
+
+                    //save temp file
+                    var resPath = Utils.GetPath(configRes);
+                    var tempPath = $"{resPath}_temp";
+                    if (Utils.ToJsonFile(config, tempPath) != 0)
+                    {
+                        return;
+                    }
+
+                    if (File.Exists(resPath))
+                    {
+                        File.Delete(resPath);
+                    }
+                    //rename
+                    File.Move(tempPath, resPath);
+                }
+                catch (Exception ex)
+                {
+                    Utils.SaveLog("ToJsonFile", ex);
+                }
             }
         }
 
@@ -284,7 +306,17 @@ namespace v2rayN.Handler
                 vmessItem.indexId = string.Empty;
                 vmessItem.remarks = string.Format("{0}-clone", item.remarks);
 
-                AddServerCommon(ref config, vmessItem);
+                if (vmessItem.configType == EConfigType.Custom)
+                {
+                    vmessItem.address = Utils.GetConfigPath(vmessItem.address);
+                    if (AddCustomServer(ref config, vmessItem, false) == 0)
+                    {
+                    }
+                }
+                else
+                {
+                    AddServerCommon(ref config, vmessItem);
+                }
             }
 
             ToJsonFile(config);
@@ -442,7 +474,7 @@ namespace v2rayN.Handler
 
             try
             {
-                File.Copy(fileName, Path.Combine(Utils.GetConfigPath(), newFileName));
+                File.Copy(fileName, Utils.GetConfigPath(newFileName));
                 if (blDelete)
                 {
                     File.Delete(fileName);
@@ -940,14 +972,39 @@ namespace v2rayN.Handler
                 vmessItem.address = fileName;
                 vmessItem.remarks = "clash_custom";
             }
+            //Is hysteria configuration
+            else if (clipboardData.IndexOf("server") >= 0
+                && clipboardData.IndexOf("up") >= 0
+                && clipboardData.IndexOf("down") >= 0
+                && clipboardData.IndexOf("listen") >= 0)
+            {
+                var fileName = Utils.GetTempPath($"{Utils.GetGUID(false)}.json");
+                File.WriteAllText(fileName, clipboardData);
+
+                vmessItem.coreType = ECoreType.hysteria;
+                vmessItem.address = fileName;
+                vmessItem.remarks = "hysteria_custom";
+            }
+            //Is naiveproxy configuration
+            else if (clipboardData.IndexOf("listen") >= 0
+                && clipboardData.IndexOf("proxy") >= 0)
+            {
+                var fileName = Utils.GetTempPath($"{Utils.GetGUID(false)}.json");
+                File.WriteAllText(fileName, clipboardData);
+
+                vmessItem.coreType = ECoreType.naiveproxy;
+                vmessItem.address = fileName;
+                vmessItem.remarks = "naiveproxy_custom";
+            }
             //Is Other configuration
             else
             {
-                var fileName = Utils.GetTempPath($"{Utils.GetGUID(false)}.txt");
-                File.WriteAllText(fileName, clipboardData);
+                return -1;
+                //var fileName = Utils.GetTempPath($"{Utils.GetGUID(false)}.txt");
+                //File.WriteAllText(fileName, clipboardData);
 
-                vmessItem.address = fileName;
-                vmessItem.remarks = "other_custom";
+                //vmessItem.address = fileName;
+                //vmessItem.remarks = "other_custom";
             }
 
             if (!Utils.IsNullOrEmpty(subid))
@@ -977,6 +1034,56 @@ namespace v2rayN.Handler
             }
         }
 
+        private static int AddBatchServers4SsSIP008(ref Config config, string clipboardData, string subid, List<VmessItem> lstOriSub, string groupId)
+        {
+            if (Utils.IsNullOrEmpty(clipboardData))
+            {
+                return -1;
+            }
+
+            if (!Utils.IsNullOrEmpty(subid))
+            {
+                RemoveServerViaSubid(ref config, subid);
+            }
+
+            //SsSIP008
+            var lstSsServer = Utils.FromJson<List<SsServer>>(clipboardData);
+            if (lstSsServer == null || lstSsServer.Count <= 0)
+            {
+                var ssSIP008 = Utils.FromJson<SsSIP008>(clipboardData);
+                if (ssSIP008 != null && ssSIP008.servers != null && ssSIP008.servers.Count > 0)
+                {
+                    lstSsServer = ssSIP008.servers;
+                }
+            }
+
+            if (lstSsServer != null && lstSsServer.Count > 0)
+            {
+                int counter = 0;
+                foreach (var it in lstSsServer)
+                {
+                    var ssItem = new VmessItem()
+                    {
+                        subid = subid,
+                        groupId = groupId,
+                        remarks = it.remarks,
+                        security = it.method,
+                        id = it.password,
+                        address = it.server,
+                        port = Utils.ToInt(it.server_port)
+                    };
+                    if (AddShadowsocksServer(ref config, ssItem, false) == 0)
+                    {
+                        counter++;
+                    }
+                }
+                ToJsonFile(config);
+                return counter;
+            }
+
+            return -1;
+        }
+
         public static int AddBatchServers(ref Config config, string clipboardData, string subid, string groupId)
         {
             List<VmessItem> lstOriSub = null;
@@ -989,6 +1096,11 @@ namespace v2rayN.Handler
             if (counter < 1)
             {
                 counter = AddBatchServers(ref config, Utils.Base64Decode(clipboardData), subid, lstOriSub, groupId);
+            }
+
+            if (counter < 1)
+            {
+                counter = AddBatchServers4SsSIP008(ref config, clipboardData, subid, lstOriSub, groupId);
             }
 
             //maybe other sub 
@@ -1159,6 +1271,8 @@ namespace v2rayN.Handler
             {
                 config.uiItem.mainLvColWidth.Add(name, width);
             }
+
+            ToJsonFile(config);
             return 0;
         }
         public static int GetformMainLvColWidth(ref Config config, string name, int width)
@@ -1203,6 +1317,10 @@ namespace v2rayN.Handler
             if (config.routingIndex >= config.routings.Count)
             {
                 config.routingIndex = 0;
+            }
+            if (config.trayMenuServersLimit <= 0)
+            {
+                config.trayMenuServersLimit = 30;
             }
 
             Global.reloadV2ray = true;

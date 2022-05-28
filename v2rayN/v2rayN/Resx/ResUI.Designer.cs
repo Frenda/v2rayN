@@ -322,6 +322,24 @@ namespace v2rayN.Resx {
         }
         
         /// <summary>
+        ///   查找类似 LAN 的本地化字符串。
+        /// </summary>
+        internal static string LabLAN {
+            get {
+                return ResourceManager.GetString("LabLAN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Local 的本地化字符串。
+        /// </summary>
+        internal static string LabLocal {
+            get {
+                return ResourceManager.GetString("LabLocal", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 Address 的本地化字符串。
         /// </summary>
         internal static string LvAddress {
@@ -619,7 +637,7 @@ namespace v2rayN.Resx {
         }
         
         /// <summary>
-        ///   查找类似 Failed to get subscription content 的本地化字符串。
+        ///   查找类似 Invalid subscription content 的本地化字符串。
         /// </summary>
         internal static string MsgSubscriptionDecodingFailed {
             get {
@@ -880,6 +898,15 @@ namespace v2rayN.Resx {
         }
         
         /// <summary>
+        ///   查找类似 Speed Test... 的本地化字符串。
+        /// </summary>
+        internal static string Speedtesting {
+            get {
+                return ResourceManager.GetString("Speedtesting", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 PAC failed to start. Run it with Admin right. 的本地化字符串。
         /// </summary>
         internal static string StartPacFailed {
@@ -935,11 +962,29 @@ namespace v2rayN.Resx {
         }
         
         /// <summary>
-        ///   查找类似 The ping of current service: {0} 的本地化字符串。
+        ///   查找类似 System proxy 的本地化字符串。
+        /// </summary>
+        internal static string SystemProxy {
+            get {
+                return ResourceManager.GetString("SystemProxy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 The ping of current service: {0} ms 的本地化字符串。
         /// </summary>
         internal static string TestMeOutput {
             get {
                 return ResourceManager.GetString("TestMeOutput", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Too many servers, please open the main interface 的本地化字符串。
+        /// </summary>
+        internal static string TooManyServersTip {
+            get {
+                return ResourceManager.GetString("TooManyServersTip", resourceCulture);
             }
         }
         

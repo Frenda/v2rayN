@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using v2rayN.Base;
 using System.Linq;
-
+using System.Drawing;
 
 namespace v2rayN.Mode
 {
@@ -48,14 +48,6 @@ namespace v2rayN.Mode
         /// 
         /// </summary>
         public ESysProxyType sysProxyType
-        {
-            get; set;
-        }
-
-        /// <summary>
-        /// 允许来自局域网的连接
-        /// </summary>
-        public bool allowLANConn
         {
             get; set;
         }
@@ -132,16 +124,18 @@ namespace v2rayN.Mode
         {
             get; set;
         }
+        public string systemProxyAdvancedProtocol { get; set; }
+        
+        public int autoUpdateInterval { get; set; } = 0;
 
-        public int autoUpdateInterval
-        {
-            get; set;
-        } = 0;
+        public int autoUpdateSubInterval { get; set; } = 0;
 
         public bool enableSecurityProtocolTls13
         {
             get; set;
         }
+
+        public int trayMenuServersLimit { get; set; }
 
         #endregion
 
@@ -216,24 +210,27 @@ namespace v2rayN.Mode
 
         public int GetLocalPort(string protocol)
         {
-            if (protocol == Global.InboundHttp)
-            {
-                return GetLocalPort(Global.InboundSocks) + 1;
-            }
+            int localPort = inbound.FirstOrDefault(t => t.protocol == Global.InboundSocks).localPort;
 
+            if (protocol == Global.InboundSocks)
+            {
+                return localPort;
+            }
+            else if (protocol == Global.InboundHttp)
+            {
+                return localPort + 1;
+            }
+            else if (protocol == Global.InboundSocks2)
+            {
+                return localPort + 2;
+            }
+            else if (protocol == Global.InboundHttp2)
+            {
+                return localPort + 3;
+            }
             else if (protocol == "speedtest")
             {
-                return GetLocalPort(Global.InboundSocks) + 103;
-            }
-
-            int localPort = 0;
-            foreach (InItem inItem in inbound)
-            {
-                if (inItem.protocol.Equals(protocol))
-                {
-                    localPort = inItem.localPort;
-                    break;
-                }
+                return localPort + 103;
             }
             return localPort;
         }
@@ -346,18 +343,30 @@ namespace v2rayN.Mode
             {
                 return subRemarks;
             }
-            foreach (SubItem sub in config.subItem)
-            {
-                if (sub.id.EndsWith(subid))
-                {
-                    return sub.remarks;
-                }
-            }
             if (subid.Length <= 4)
             {
                 return subid;
             }
+            var sub = config.subItem.FirstOrDefault(t => t.id == subid);
+            if (sub != null)
+            {
+                return sub.remarks;
+            }
             return subid.Substring(0, 4);
+        }
+        public string GetGroupRemarks(Config config)
+        {
+            string subRemarks = string.Empty;
+            if (Utils.IsNullOrEmpty(groupId))
+            {
+                return subRemarks;
+            }
+            var group = config.groupItem.FirstOrDefault(t => t.id == groupId);
+            if (group != null)
+            {
+                return group.remarks;
+            }
+            return groupId.Substring(0, 4);
         }
 
         public List<string> GetAlpn()
@@ -581,6 +590,13 @@ namespace v2rayN.Mode
         /// 开启流量探测
         /// </summary>
         public bool sniffingEnabled { get; set; } = true;
+
+        public bool allowLANConn { get; set; }
+
+        public string user { get; set; }
+
+        public string pass { get; set; }
+
     }
 
     [Serializable]
@@ -692,7 +708,9 @@ namespace v2rayN.Mode
             get; set;
         }
 
-        public System.Drawing.Size mainSize
+        public Point mainLocation { get; set; }
+
+        public Size mainSize
         {
             get; set;
         }
@@ -756,6 +774,10 @@ namespace v2rayN.Mode
         /// 
         /// </summary>
         public string remarks
+        {
+            get; set;
+        }
+        public int sort
         {
             get; set;
         }

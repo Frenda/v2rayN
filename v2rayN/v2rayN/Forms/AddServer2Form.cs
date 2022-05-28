@@ -20,7 +20,9 @@ namespace v2rayN.Forms
         {
             cmbCoreType.Items.AddRange(Global.coreTypes.ToArray());
             cmbCoreType.Items.Add("clash");
+            cmbCoreType.Items.Add("clash_meta"); 
             cmbCoreType.Items.Add("hysteria");
+            cmbCoreType.Items.Add("naiveproxy");
             cmbCoreType.Items.Add(string.Empty);
 
             txtAddress.ReadOnly = true;
@@ -150,7 +152,7 @@ namespace v2rayN.Forms
                 return;
             }
 
-            address = Path.Combine(Utils.GetConfigPath(), address);
+            address = Utils.GetConfigPath(address);
             Process.Start(address);
         }
     }

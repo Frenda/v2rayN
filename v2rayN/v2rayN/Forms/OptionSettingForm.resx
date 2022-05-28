@@ -143,10 +143,112 @@
   <data name="&gt;&gt;btnClose.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
-  <data name="chkdefAllowInsecure.AutoSize" type="System.Boolean, mscorlib">
+  <data name="label16.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="label16.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="label16.Location" type="System.Drawing.Point, System.Drawing">
+    <value>397, 65</value>
+  </data>
+  <data name="label16.Size" type="System.Drawing.Size, System.Drawing">
+    <value>59, 12</value>
+  </data>
+  <data name="label16.TabIndex" type="System.Int32, mscorlib">
+    <value>39</value>
+  </data>
+  <data name="label16.Text" xml:space="preserve">
+    <value>Auth pass</value>
+  </data>
+  <data name="&gt;&gt;label16.Name" xml:space="preserve">
+    <value>label16</value>
+  </data>
+  <data name="&gt;&gt;label16.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label16.Parent" xml:space="preserve">
+    <value>groupBox1</value>
+  </data>
+  <data name="&gt;&gt;label16.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="label4.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="label4.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="label4.Location" type="System.Drawing.Point, System.Drawing">
+    <value>224, 65</value>
+  </data>
+  <data name="label4.Size" type="System.Drawing.Size, System.Drawing">
+    <value>59, 12</value>
+  </data>
+  <data name="label4.TabIndex" type="System.Int32, mscorlib">
+    <value>38</value>
+  </data>
+  <data name="label4.Text" xml:space="preserve">
+    <value>Auth user</value>
+  </data>
+  <data name="&gt;&gt;label4.Name" xml:space="preserve">
+    <value>label4</value>
+  </data>
+  <data name="&gt;&gt;label4.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label4.Parent" xml:space="preserve">
+    <value>groupBox1</value>
+  </data>
+  <data name="&gt;&gt;label4.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="txtpass.Location" type="System.Drawing.Point, System.Drawing">
+    <value>496, 61</value>
+  </data>
+  <data name="txtpass.Size" type="System.Drawing.Size, System.Drawing">
+    <value>120, 21</value>
+  </data>
+  <data name="txtpass.TabIndex" type="System.Int32, mscorlib">
+    <value>37</value>
+  </data>
+  <data name="&gt;&gt;txtpass.Name" xml:space="preserve">
+    <value>txtpass</value>
+  </data>
+  <data name="&gt;&gt;txtpass.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;txtpass.Parent" xml:space="preserve">
+    <value>groupBox1</value>
+  </data>
+  <data name="&gt;&gt;txtpass.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="txtuser.Location" type="System.Drawing.Point, System.Drawing">
+    <value>285, 61</value>
+  </data>
+  <data name="txtuser.Size" type="System.Drawing.Size, System.Drawing">
+    <value>97, 21</value>
+  </data>
+  <data name="txtuser.TabIndex" type="System.Int32, mscorlib">
+    <value>36</value>
+  </data>
+  <data name="&gt;&gt;txtuser.Name" xml:space="preserve">
+    <value>txtuser</value>
+  </data>
+  <data name="&gt;&gt;txtuser.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;txtuser.Parent" xml:space="preserve">
+    <value>groupBox1</value>
+  </data>
+  <data name="&gt;&gt;txtuser.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="chkdefAllowInsecure.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
   <data name="chkdefAllowInsecure.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
@@ -172,40 +274,34 @@
     <value>groupBox1</value>
   </data>
   <data name="&gt;&gt;chkdefAllowInsecure.ZOrder" xml:space="preserve">
-    <value>0</value>
+    <value>4</value>
   </data>
-  <data name="chksniffingEnabled2.AutoSize" type="System.Boolean, mscorlib">
+  <data name="chkAllowLANConn.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
-  <data name="chksniffingEnabled2.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
+  <data name="chkAllowLANConn.Location" type="System.Drawing.Point, System.Drawing">
+    <value>15, 63</value>
   </data>
-  <data name="chksniffingEnabled2.Location" type="System.Drawing.Point, System.Drawing">
-    <value>468, 60</value>
+  <data name="chkAllowLANConn.Size" type="System.Drawing.Size, System.Drawing">
+    <value>204, 16</value>
   </data>
-  <data name="chksniffingEnabled2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>120, 16</value>
+  <data name="chkAllowLANConn.TabIndex" type="System.Int32, mscorlib">
+    <value>29</value>
   </data>
-  <data name="chksniffingEnabled2.TabIndex" type="System.Int32, mscorlib">
-    <value>32</value>
+  <data name="chkAllowLANConn.Text" xml:space="preserve">
+    <value>Allow connections from the LAN</value>
   </data>
-  <data name="chksniffingEnabled2.Text" xml:space="preserve">
-    <value>Turn on Sniffing</value>
+  <data name="&gt;&gt;chkAllowLANConn.Name" xml:space="preserve">
+    <value>chkAllowLANConn</value>
   </data>
-  <data name="chksniffingEnabled2.Visible" type="System.Boolean, mscorlib">
-    <value>False</value>
-  </data>
-  <data name="&gt;&gt;chksniffingEnabled2.Name" xml:space="preserve">
-    <value>chksniffingEnabled2</value>
-  </data>
-  <data name="&gt;&gt;chksniffingEnabled2.Type" xml:space="preserve">
+  <data name="&gt;&gt;chkAllowLANConn.Type" xml:space="preserve">
     <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;chksniffingEnabled2.Parent" xml:space="preserve">
+  <data name="&gt;&gt;chkAllowLANConn.Parent" xml:space="preserve">
     <value>groupBox1</value>
   </data>
-  <data name="&gt;&gt;chksniffingEnabled2.ZOrder" xml:space="preserve">
-    <value>1</value>
+  <data name="&gt;&gt;chkAllowLANConn.ZOrder" xml:space="preserve">
+    <value>5</value>
   </data>
   <data name="chksniffingEnabled.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -214,7 +310,7 @@
     <value>NoControl</value>
   </data>
   <data name="chksniffingEnabled.Location" type="System.Drawing.Point, System.Drawing">
-    <value>468, 27</value>
+    <value>496, 27</value>
   </data>
   <data name="chksniffingEnabled.Size" type="System.Drawing.Size, System.Drawing">
     <value>120, 16</value>
@@ -235,7 +331,7 @@
     <value>groupBox1</value>
   </data>
   <data name="&gt;&gt;chksniffingEnabled.ZOrder" xml:space="preserve">
-    <value>2</value>
+    <value>6</value>
   </data>
   <data name="chkmuxEnabled.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -262,151 +358,7 @@
     <value>groupBox1</value>
   </data>
   <data name="&gt;&gt;chkmuxEnabled.ZOrder" xml:space="preserve">
-    <value>3</value>
-  </data>
-  <data name="chkAllowIn2.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="chkAllowIn2.Location" type="System.Drawing.Point, System.Drawing">
-    <value>15, 63</value>
-  </data>
-  <data name="chkAllowIn2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>120, 16</value>
-  </data>
-  <data name="chkAllowIn2.TabIndex" type="System.Int32, mscorlib">
-    <value>19</value>
-  </data>
-  <data name="chkAllowIn2.Text" xml:space="preserve">
-    <value>listening port 2</value>
-  </data>
-  <data name="chkAllowIn2.Visible" type="System.Boolean, mscorlib">
-    <value>False</value>
-  </data>
-  <data name="&gt;&gt;chkAllowIn2.Name" xml:space="preserve">
-    <value>chkAllowIn2</value>
-  </data>
-  <data name="&gt;&gt;chkAllowIn2.Type" xml:space="preserve">
-    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;chkAllowIn2.Parent" xml:space="preserve">
-    <value>groupBox1</value>
-  </data>
-  <data name="&gt;&gt;chkAllowIn2.ZOrder" xml:space="preserve">
-    <value>4</value>
-  </data>
-  <data name="chkudpEnabled2.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="chkudpEnabled2.Location" type="System.Drawing.Point, System.Drawing">
-    <value>369, 62</value>
-  </data>
-  <data name="chkudpEnabled2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>84, 16</value>
-  </data>
-  <data name="chkudpEnabled2.TabIndex" type="System.Int32, mscorlib">
-    <value>18</value>
-  </data>
-  <data name="chkudpEnabled2.Text" xml:space="preserve">
-    <value>Enable UDP</value>
-  </data>
-  <data name="chkudpEnabled2.Visible" type="System.Boolean, mscorlib">
-    <value>False</value>
-  </data>
-  <data name="&gt;&gt;chkudpEnabled2.Name" xml:space="preserve">
-    <value>chkudpEnabled2</value>
-  </data>
-  <data name="&gt;&gt;chkudpEnabled2.Type" xml:space="preserve">
-    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;chkudpEnabled2.Parent" xml:space="preserve">
-    <value>groupBox1</value>
-  </data>
-  <data name="&gt;&gt;chkudpEnabled2.ZOrder" xml:space="preserve">
-    <value>5</value>
-  </data>
-  <data name="cmbprotocol2.Items" xml:space="preserve">
-    <value>socks</value>
-  </data>
-  <data name="cmbprotocol2.Items1" xml:space="preserve">
-    <value>http</value>
-  </data>
-  <data name="cmbprotocol2.Location" type="System.Drawing.Point, System.Drawing">
-    <value>257, 60</value>
-  </data>
-  <data name="cmbprotocol2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>97, 20</value>
-  </data>
-  <data name="cmbprotocol2.TabIndex" type="System.Int32, mscorlib">
-    <value>17</value>
-  </data>
-  <data name="cmbprotocol2.Visible" type="System.Boolean, mscorlib">
-    <value>False</value>
-  </data>
-  <data name="&gt;&gt;cmbprotocol2.Name" xml:space="preserve">
-    <value>cmbprotocol2</value>
-  </data>
-  <data name="&gt;&gt;cmbprotocol2.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ComboBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;cmbprotocol2.Parent" xml:space="preserve">
-    <value>groupBox1</value>
-  </data>
-  <data name="&gt;&gt;cmbprotocol2.ZOrder" xml:space="preserve">
-    <value>6</value>
-  </data>
-  <data name="label3.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="label3.Location" type="System.Drawing.Point, System.Drawing">
-    <value>206, 64</value>
-  </data>
-  <data name="label3.Size" type="System.Drawing.Size, System.Drawing">
-    <value>53, 12</value>
-  </data>
-  <data name="label3.TabIndex" type="System.Int32, mscorlib">
-    <value>16</value>
-  </data>
-  <data name="label3.Text" xml:space="preserve">
-    <value>protocol</value>
-  </data>
-  <data name="label3.Visible" type="System.Boolean, mscorlib">
-    <value>False</value>
-  </data>
-  <data name="&gt;&gt;label3.Name" xml:space="preserve">
-    <value>label3</value>
-  </data>
-  <data name="&gt;&gt;label3.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;label3.Parent" xml:space="preserve">
-    <value>groupBox1</value>
-  </data>
-  <data name="&gt;&gt;label3.ZOrder" xml:space="preserve">
     <value>7</value>
-  </data>
-  <data name="txtlocalPort2.Location" type="System.Drawing.Point, System.Drawing">
-    <value>124, 60</value>
-  </data>
-  <data name="txtlocalPort2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>78, 21</value>
-  </data>
-  <data name="txtlocalPort2.TabIndex" type="System.Int32, mscorlib">
-    <value>14</value>
-  </data>
-  <data name="txtlocalPort2.Visible" type="System.Boolean, mscorlib">
-    <value>False</value>
-  </data>
-  <data name="&gt;&gt;txtlocalPort2.Name" xml:space="preserve">
-    <value>txtlocalPort2</value>
-  </data>
-  <data name="&gt;&gt;txtlocalPort2.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;txtlocalPort2.Parent" xml:space="preserve">
-    <value>groupBox1</value>
-  </data>
-  <data name="&gt;&gt;txtlocalPort2.ZOrder" xml:space="preserve">
-    <value>8</value>
   </data>
   <data name="cmbprotocol.Enabled" type="System.Boolean, mscorlib">
     <value>False</value>
@@ -418,7 +370,7 @@
     <value>http</value>
   </data>
   <data name="cmbprotocol.Location" type="System.Drawing.Point, System.Drawing">
-    <value>257, 25</value>
+    <value>285, 25</value>
   </data>
   <data name="cmbprotocol.Size" type="System.Drawing.Size, System.Drawing">
     <value>97, 20</value>
@@ -436,13 +388,13 @@
     <value>groupBox1</value>
   </data>
   <data name="&gt;&gt;cmbprotocol.ZOrder" xml:space="preserve">
-    <value>9</value>
+    <value>8</value>
   </data>
   <data name="label1.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
   <data name="label1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>206, 29</value>
+    <value>224, 29</value>
   </data>
   <data name="label1.Size" type="System.Drawing.Size, System.Drawing">
     <value>53, 12</value>
@@ -463,13 +415,13 @@
     <value>groupBox1</value>
   </data>
   <data name="&gt;&gt;label1.ZOrder" xml:space="preserve">
-    <value>10</value>
+    <value>9</value>
   </data>
   <data name="chkudpEnabled.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
   <data name="chkudpEnabled.Location" type="System.Drawing.Point, System.Drawing">
-    <value>369, 27</value>
+    <value>397, 27</value>
   </data>
   <data name="chkudpEnabled.Size" type="System.Drawing.Size, System.Drawing">
     <value>84, 16</value>
@@ -490,7 +442,7 @@
     <value>groupBox1</value>
   </data>
   <data name="&gt;&gt;chkudpEnabled.ZOrder" xml:space="preserve">
-    <value>11</value>
+    <value>10</value>
   </data>
   <data name="chklogEnabled.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -517,7 +469,7 @@
     <value>groupBox1</value>
   </data>
   <data name="&gt;&gt;chklogEnabled.ZOrder" xml:space="preserve">
-    <value>12</value>
+    <value>11</value>
   </data>
   <data name="cmbloglevel.Items" xml:space="preserve">
     <value>debug</value>
@@ -553,7 +505,7 @@
     <value>groupBox1</value>
   </data>
   <data name="&gt;&gt;cmbloglevel.ZOrder" xml:space="preserve">
-    <value>13</value>
+    <value>12</value>
   </data>
   <data name="label5.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -580,7 +532,7 @@
     <value>groupBox1</value>
   </data>
   <data name="&gt;&gt;label5.ZOrder" xml:space="preserve">
-    <value>14</value>
+    <value>13</value>
   </data>
   <data name="txtlocalPort.Location" type="System.Drawing.Point, System.Drawing">
     <value>124, 25</value>
@@ -601,7 +553,7 @@
     <value>groupBox1</value>
   </data>
   <data name="&gt;&gt;txtlocalPort.ZOrder" xml:space="preserve">
-    <value>15</value>
+    <value>14</value>
   </data>
   <data name="label2.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -628,7 +580,7 @@
     <value>groupBox1</value>
   </data>
   <data name="&gt;&gt;label2.ZOrder" xml:space="preserve">
-    <value>16</value>
+    <value>15</value>
   </data>
   <data name="groupBox1.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
@@ -1137,8 +1089,110 @@
   <data name="&gt;&gt;tabPage6.ZOrder" xml:space="preserve">
     <value>2</value>
   </data>
+  <data name="txttrayMenuServersLimit.Location" type="System.Drawing.Point, System.Drawing">
+    <value>351, 211</value>
+  </data>
+  <data name="txttrayMenuServersLimit.Size" type="System.Drawing.Size, System.Drawing">
+    <value>97, 21</value>
+  </data>
+  <data name="txttrayMenuServersLimit.TabIndex" type="System.Int32, mscorlib">
+    <value>45</value>
+  </data>
+  <data name="&gt;&gt;txttrayMenuServersLimit.Name" xml:space="preserve">
+    <value>txttrayMenuServersLimit</value>
+  </data>
+  <data name="&gt;&gt;txttrayMenuServersLimit.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;txttrayMenuServersLimit.Parent" xml:space="preserve">
+    <value>tabPage7</value>
+  </data>
+  <data name="&gt;&gt;txttrayMenuServersLimit.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="label17.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="label17.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="label17.Location" type="System.Drawing.Point, System.Drawing">
+    <value>27, 215</value>
+  </data>
+  <data name="label17.Size" type="System.Drawing.Size, System.Drawing">
+    <value>263, 12</value>
+  </data>
+  <data name="label17.TabIndex" type="System.Int32, mscorlib">
+    <value>44</value>
+  </data>
+  <data name="label17.Text" xml:space="preserve">
+    <value>Tray right-click menu servers display limit</value>
+  </data>
+  <data name="&gt;&gt;label17.Name" xml:space="preserve">
+    <value>label17</value>
+  </data>
+  <data name="&gt;&gt;label17.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label17.Parent" xml:space="preserve">
+    <value>tabPage7</value>
+  </data>
+  <data name="&gt;&gt;label17.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="txtautoUpdateSubInterval.Location" type="System.Drawing.Point, System.Drawing">
+    <value>351, 184</value>
+  </data>
+  <data name="txtautoUpdateSubInterval.Size" type="System.Drawing.Size, System.Drawing">
+    <value>97, 21</value>
+  </data>
+  <data name="txtautoUpdateSubInterval.TabIndex" type="System.Int32, mscorlib">
+    <value>43</value>
+  </data>
+  <data name="&gt;&gt;txtautoUpdateSubInterval.Name" xml:space="preserve">
+    <value>txtautoUpdateSubInterval</value>
+  </data>
+  <data name="&gt;&gt;txtautoUpdateSubInterval.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;txtautoUpdateSubInterval.Parent" xml:space="preserve">
+    <value>tabPage7</value>
+  </data>
+  <data name="&gt;&gt;txtautoUpdateSubInterval.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="label3.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="label3.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="label3.Location" type="System.Drawing.Point, System.Drawing">
+    <value>27, 188</value>
+  </data>
+  <data name="label3.Size" type="System.Drawing.Size, System.Drawing">
+    <value>305, 12</value>
+  </data>
+  <data name="label3.TabIndex" type="System.Int32, mscorlib">
+    <value>42</value>
+  </data>
+  <data name="label3.Text" xml:space="preserve">
+    <value>Automatic update interval of subscriptions (hours)</value>
+  </data>
+  <data name="&gt;&gt;label3.Name" xml:space="preserve">
+    <value>label3</value>
+  </data>
+  <data name="&gt;&gt;label3.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label3.Parent" xml:space="preserve">
+    <value>tabPage7</value>
+  </data>
+  <data name="&gt;&gt;label3.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
   <data name="chkEnableSecurityProtocolTls13.Location" type="System.Drawing.Point, System.Drawing">
-    <value>15, 211</value>
+    <value>15, 131</value>
   </data>
   <data name="chkEnableSecurityProtocolTls13.Size" type="System.Drawing.Size, System.Drawing">
     <value>506, 16</value>
@@ -1159,7 +1213,7 @@
     <value>tabPage7</value>
   </data>
   <data name="&gt;&gt;chkEnableSecurityProtocolTls13.ZOrder" xml:space="preserve">
-    <value>0</value>
+    <value>4</value>
   </data>
   <data name="chkEnableAutoAdjustMainLvColWidth.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -1168,7 +1222,7 @@
     <value>NoControl</value>
   </data>
   <data name="chkEnableAutoAdjustMainLvColWidth.Location" type="System.Drawing.Point, System.Drawing">
-    <value>15, 189</value>
+    <value>15, 108</value>
   </data>
   <data name="chkEnableAutoAdjustMainLvColWidth.Size" type="System.Drawing.Size, System.Drawing">
     <value>390, 16</value>
@@ -1189,7 +1243,7 @@
     <value>tabPage7</value>
   </data>
   <data name="&gt;&gt;chkEnableAutoAdjustMainLvColWidth.ZOrder" xml:space="preserve">
-    <value>1</value>
+    <value>5</value>
   </data>
   <data name="btnSetLoopback.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
@@ -1216,10 +1270,10 @@
     <value>tabPage7</value>
   </data>
   <data name="&gt;&gt;btnSetLoopback.ZOrder" xml:space="preserve">
-    <value>2</value>
+    <value>6</value>
   </data>
   <data name="txtautoUpdateInterval.Location" type="System.Drawing.Point, System.Drawing">
-    <value>325, 156</value>
+    <value>351, 157</value>
   </data>
   <data name="txtautoUpdateInterval.Size" type="System.Drawing.Size, System.Drawing">
     <value>97, 21</value>
@@ -1237,7 +1291,7 @@
     <value>tabPage7</value>
   </data>
   <data name="&gt;&gt;txtautoUpdateInterval.ZOrder" xml:space="preserve">
-    <value>3</value>
+    <value>7</value>
   </data>
   <data name="label15.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -1246,16 +1300,16 @@
     <value>NoControl</value>
   </data>
   <data name="label15.Location" type="System.Drawing.Point, System.Drawing">
-    <value>30, 162</value>
+    <value>27, 161</value>
   </data>
   <data name="label15.Size" type="System.Drawing.Size, System.Drawing">
-    <value>239, 12</value>
+    <value>269, 12</value>
   </data>
   <data name="label15.TabIndex" type="System.Int32, mscorlib">
     <value>37</value>
   </data>
   <data name="label15.Text" xml:space="preserve">
-    <value>Automatic update interval of Geo(hours)</value>
+    <value>Automatic update interval of and Geo (hours)</value>
   </data>
   <data name="&gt;&gt;label15.Name" xml:space="preserve">
     <value>label15</value>
@@ -1267,7 +1321,7 @@
     <value>tabPage7</value>
   </data>
   <data name="&gt;&gt;label15.ZOrder" xml:space="preserve">
-    <value>4</value>
+    <value>8</value>
   </data>
   <data name="chkIgnoreGeoUpdateCore.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -1276,7 +1330,7 @@
     <value>NoControl</value>
   </data>
   <data name="chkIgnoreGeoUpdateCore.Location" type="System.Drawing.Point, System.Drawing">
-    <value>15, 132</value>
+    <value>15, 85</value>
   </data>
   <data name="chkIgnoreGeoUpdateCore.Size" type="System.Drawing.Size, System.Drawing">
     <value>234, 16</value>
@@ -1297,7 +1351,7 @@
     <value>tabPage7</value>
   </data>
   <data name="&gt;&gt;chkIgnoreGeoUpdateCore.ZOrder" xml:space="preserve">
-    <value>5</value>
+    <value>9</value>
   </data>
   <data name="chkKeepOlderDedupl.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -1306,7 +1360,7 @@
     <value>NoControl</value>
   </data>
   <data name="chkKeepOlderDedupl.Location" type="System.Drawing.Point, System.Drawing">
-    <value>15, 108</value>
+    <value>15, 62</value>
   </data>
   <data name="chkKeepOlderDedupl.Size" type="System.Drawing.Size, System.Drawing">
     <value>198, 16</value>
@@ -1327,10 +1381,10 @@
     <value>tabPage7</value>
   </data>
   <data name="&gt;&gt;chkKeepOlderDedupl.ZOrder" xml:space="preserve">
-    <value>6</value>
+    <value>10</value>
   </data>
   <data name="cbFreshrate.Location" type="System.Drawing.Point, System.Drawing">
-    <value>161, 84</value>
+    <value>620, 37</value>
   </data>
   <data name="cbFreshrate.Size" type="System.Drawing.Size, System.Drawing">
     <value>58, 20</value>
@@ -1348,7 +1402,7 @@
     <value>tabPage7</value>
   </data>
   <data name="&gt;&gt;cbFreshrate.ZOrder" xml:space="preserve">
-    <value>7</value>
+    <value>11</value>
   </data>
   <data name="lbFreshrate.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -1357,7 +1411,7 @@
     <value>NoControl</value>
   </data>
   <data name="lbFreshrate.Location" type="System.Drawing.Point, System.Drawing">
-    <value>30, 88</value>
+    <value>489, 41</value>
   </data>
   <data name="lbFreshrate.Size" type="System.Drawing.Size, System.Drawing">
     <value>125, 12</value>
@@ -1378,7 +1432,7 @@
     <value>tabPage7</value>
   </data>
   <data name="&gt;&gt;lbFreshrate.ZOrder" xml:space="preserve">
-    <value>8</value>
+    <value>12</value>
   </data>
   <data name="chkEnableStatistics.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -1387,16 +1441,16 @@
     <value>NoControl</value>
   </data>
   <data name="chkEnableStatistics.Location" type="System.Drawing.Point, System.Drawing">
-    <value>15, 64</value>
+    <value>15, 39</value>
   </data>
   <data name="chkEnableStatistics.Size" type="System.Drawing.Size, System.Drawing">
-    <value>576, 16</value>
+    <value>468, 16</value>
   </data>
   <data name="chkEnableStatistics.TabIndex" type="System.Int32, mscorlib">
     <value>29</value>
   </data>
   <data name="chkEnableStatistics.Text" xml:space="preserve">
-    <value>Enable Statistics (Realtime netspeed and traffic records. Require restart the v2rayN client)</value>
+    <value>Enable Statistics (Realtime netspeed and traffic records. Require restart)</value>
   </data>
   <data name="&gt;&gt;chkEnableStatistics.Name" xml:space="preserve">
     <value>chkEnableStatistics</value>
@@ -1408,34 +1462,7 @@
     <value>tabPage7</value>
   </data>
   <data name="&gt;&gt;chkEnableStatistics.ZOrder" xml:space="preserve">
-    <value>9</value>
-  </data>
-  <data name="chkAllowLANConn.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="chkAllowLANConn.Location" type="System.Drawing.Point, System.Drawing">
-    <value>15, 40</value>
-  </data>
-  <data name="chkAllowLANConn.Size" type="System.Drawing.Size, System.Drawing">
-    <value>204, 16</value>
-  </data>
-  <data name="chkAllowLANConn.TabIndex" type="System.Int32, mscorlib">
-    <value>29</value>
-  </data>
-  <data name="chkAllowLANConn.Text" xml:space="preserve">
-    <value>Allow connections from the LAN</value>
-  </data>
-  <data name="&gt;&gt;chkAllowLANConn.Name" xml:space="preserve">
-    <value>chkAllowLANConn</value>
-  </data>
-  <data name="&gt;&gt;chkAllowLANConn.Type" xml:space="preserve">
-    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;chkAllowLANConn.Parent" xml:space="preserve">
-    <value>tabPage7</value>
-  </data>
-  <data name="&gt;&gt;chkAllowLANConn.ZOrder" xml:space="preserve">
-    <value>10</value>
+    <value>13</value>
   </data>
   <data name="chkAutoRun.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -1462,7 +1489,7 @@
     <value>tabPage7</value>
   </data>
   <data name="&gt;&gt;chkAutoRun.ZOrder" xml:space="preserve">
-    <value>11</value>
+    <value>14</value>
   </data>
   <data name="tabPage7.Location" type="System.Drawing.Point, System.Drawing">
     <value>4, 22</value>
@@ -1824,6 +1851,57 @@
   <data name="&gt;&gt;tabPageCoreType.ZOrder" xml:space="preserve">
     <value>4</value>
   </data>
+  <data name="label18.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="label18.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="label18.Location" type="System.Drawing.Point, System.Drawing">
+    <value>8, 346</value>
+  </data>
+  <data name="label18.Size" type="System.Drawing.Size, System.Drawing">
+    <value>329, 12</value>
+  </data>
+  <data name="label18.TabIndex" type="System.Int32, mscorlib">
+    <value>45</value>
+  </data>
+  <data name="label18.Text" xml:space="preserve">
+    <value>Advanced proxy settings, protocol selection (optional)</value>
+  </data>
+  <data name="&gt;&gt;label18.Name" xml:space="preserve">
+    <value>label18</value>
+  </data>
+  <data name="&gt;&gt;label18.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label18.Parent" xml:space="preserve">
+    <value>groupBox2</value>
+  </data>
+  <data name="&gt;&gt;label18.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="cmbSystemProxyAdvancedProtocol.Location" type="System.Drawing.Point, System.Drawing">
+    <value>8, 371</value>
+  </data>
+  <data name="cmbSystemProxyAdvancedProtocol.Size" type="System.Drawing.Size, System.Drawing">
+    <value>638, 20</value>
+  </data>
+  <data name="cmbSystemProxyAdvancedProtocol.TabIndex" type="System.Int32, mscorlib">
+    <value>44</value>
+  </data>
+  <data name="&gt;&gt;cmbSystemProxyAdvancedProtocol.Name" xml:space="preserve">
+    <value>cmbSystemProxyAdvancedProtocol</value>
+  </data>
+  <data name="&gt;&gt;cmbSystemProxyAdvancedProtocol.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ComboBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;cmbSystemProxyAdvancedProtocol.Parent" xml:space="preserve">
+    <value>groupBox2</value>
+  </data>
+  <data name="&gt;&gt;cmbSystemProxyAdvancedProtocol.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
   <data name="label13.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
@@ -1852,7 +1930,7 @@
     <value>groupBox2</value>
   </data>
   <data name="&gt;&gt;label13.ZOrder" xml:space="preserve">
-    <value>0</value>
+    <value>2</value>
   </data>
   <data name="label12.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -1882,7 +1960,7 @@
     <value>groupBox2</value>
   </data>
   <data name="&gt;&gt;label12.ZOrder" xml:space="preserve">
-    <value>1</value>
+    <value>3</value>
   </data>
   <data name="txtsystemProxyExceptions.Location" type="System.Drawing.Point, System.Drawing">
     <value>8, 52</value>
@@ -1909,7 +1987,7 @@
     <value>groupBox2</value>
   </data>
   <data name="&gt;&gt;txtsystemProxyExceptions.ZOrder" xml:space="preserve">
-    <value>2</value>
+    <value>4</value>
   </data>
   <data name="groupBox2.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>

@@ -23,6 +23,7 @@ using Newtonsoft.Json.Linq;
 using System.Web;
 using log4net;
 using System.Linq;
+using System.Security.Cryptography;
 
 namespace v2rayN
 {
@@ -220,6 +221,26 @@ namespace v2rayN
         }
 
         /// <summary>
+        /// 逗号分隔的字符串,先排序后转List<string>
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns></returns>
+        public static List<string> String2ListSorted(string str)
+        {
+            try
+            {
+                str = str.Replace(Environment.NewLine, "");
+                List<string> list = new List<string>(str.Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries));
+                return list.OrderBy(x => x).ToList();
+            }
+            catch (Exception ex)
+            {
+                SaveLog(ex.Message, ex);
+                return new List<string>();
+            }
+        }
+
+        /// <summary>
         /// Base64编码
         /// </summary>
         /// <param name="plainText"></param>
@@ -377,6 +398,20 @@ namespace v2rayN
         {
             return HttpUtility.UrlDecode(url);
         }
+
+        public static string GetMD5(string str)
+        {
+            var md5 = MD5.Create();
+            byte[] byteOld = Encoding.UTF8.GetBytes(str);
+            byte[] byteNew = md5.ComputeHash(byteOld);
+            StringBuilder sb = new StringBuilder();
+            foreach (byte b in byteNew)
+            {
+                sb.Append(b.ToString("x2"));
+            }
+            return sb.ToString();
+        }
+
         #endregion
 
 
@@ -509,7 +544,13 @@ namespace v2rayN
 
         #region 开机自动启动
 
-        private static string autoRunName = "v2rayNAutoRun";
+        private static string autoRunName
+        {
+            get
+            {
+                return $"v2rayNAutoRun_{GetMD5(StartupPath())}";
+            }
+        }
         private static string autoRunRegPath
         {
             get
@@ -733,16 +774,11 @@ namespace v2rayN
         {
             if (enableSecurityProtocolTls13)
             {
-                ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls
-                                           | SecurityProtocolType.Tls11
-                                           | SecurityProtocolType.Tls12
-                                           | SecurityProtocolType.Tls13;
+                ServicePointManager.SecurityProtocol |= SecurityProtocolType.Tls12 | SecurityProtocolType.Tls13;
             }
             else
             {
-                ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls
-                                           | SecurityProtocolType.Tls11
-                                           | SecurityProtocolType.Tls12;
+                ServicePointManager.SecurityProtocol |= SecurityProtocolType.Tls12;
             }
             ServicePointManager.DefaultConnectionLimit = 256;
         }
@@ -946,7 +982,7 @@ namespace v2rayN
         // return path to store temporary files
         public static string GetTempPath(string filename = "")
         {
-            string _tempPath = Path.Combine(StartupPath(), "v2ray_win_temp");
+            string _tempPath = Path.Combine(StartupPath(), "guiTemps");
             if (!Directory.Exists(_tempPath))
             {
                 Directory.CreateDirectory(_tempPath);

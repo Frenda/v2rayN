@@ -268,7 +268,7 @@
     <value>Start updating PAC...</value>
   </data>
   <data name="MsgSubscriptionDecodingFailed" xml:space="preserve">
-    <value>Failed to get subscription content</value>
+    <value>Invalid subscription content</value>
   </data>
   <data name="MsgUnpacking" xml:space="preserve">
     <value>is unpacking...</value>
@@ -356,7 +356,7 @@
     <value>Scan import URL successfully</value>
   </data>
   <data name="TestMeOutput" xml:space="preserve">
-    <value>The ping of current service: {0}</value>
+    <value>The ping of current service: {0} ms</value>
   </data>
   <data name="OperationSuccess" xml:space="preserve">
     <value>Operation success</value>
@@ -453,5 +453,20 @@
   </data>
   <data name="FillServerAddressCustom" xml:space="preserve">
     <value>Please browse to import server configuration</value>
+  </data>
+  <data name="SystemProxy" xml:space="preserve">
+    <value>System proxy</value>
+  </data>
+  <data name="Speedtesting" xml:space="preserve">
+    <value>Speed Test...</value>
+  </data>
+  <data name="TooManyServersTip" xml:space="preserve">
+    <value>Too many servers, please open the main interface</value>
+  </data>
+  <data name="LabLAN" xml:space="preserve">
+    <value>LAN</value>
+  </data>
+  <data name="LabLocal" xml:space="preserve">
+    <value>Local</value>
   </data>
 </root>

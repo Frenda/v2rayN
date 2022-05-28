@@ -18,6 +18,8 @@ namespace v2rayN.Forms
 
         private void OptionSettingForm_Load(object sender, EventArgs e)
         {
+            cmbSystemProxyAdvancedProtocol.Items.AddRange(Global.IEProxyProtocols.ToArray());
+
             InitBase();
 
             InitKCP();
@@ -46,23 +48,10 @@ namespace v2rayN.Forms
                 cmbprotocol.Text = config.inbound[0].protocol.ToString();
                 chkudpEnabled.Checked = config.inbound[0].udpEnabled;
                 chksniffingEnabled.Checked = config.inbound[0].sniffingEnabled;
+                chkAllowLANConn.Checked = config.inbound[0].allowLANConn;
+                txtuser.Text = config.inbound[0].user;
+                txtpass.Text = config.inbound[0].pass;
 
-                txtlocalPort2.Text = $"{config.inbound[0].localPort + 1}";
-                cmbprotocol2.Text = Global.InboundHttp;
-
-                if (config.inbound.Count > 1)
-                {
-                    txtlocalPort2.Text = config.inbound[1].localPort.ToString();
-                    cmbprotocol2.Text = config.inbound[1].protocol.ToString();
-                    chkudpEnabled2.Checked = config.inbound[1].udpEnabled;
-                    chksniffingEnabled2.Checked = config.inbound[1].sniffingEnabled;
-                    chkAllowIn2.Checked = true;
-                }
-                else
-                {
-                    chkAllowIn2.Checked = false;
-                }
-                chkAllowIn2State();
             }
 
             //remoteDNS
@@ -71,6 +60,8 @@ namespace v2rayN.Forms
             chkdefAllowInsecure.Checked = config.defAllowInsecure;
 
             txtsystemProxyExceptions.Text = config.systemProxyExceptions;
+
+            cmbSystemProxyAdvancedProtocol.Text = config.systemProxyAdvancedProtocol;
         }
 
 
@@ -96,7 +87,6 @@ namespace v2rayN.Forms
             //开机自动启动
             chkAutoRun.Checked = Utils.IsAutoRun();
 
-            chkAllowLANConn.Checked = config.allowLANConn;
             chkEnableStatistics.Checked = config.enableStatistics;
             chkKeepOlderDedupl.Checked = config.keepOlderDedupl;
 
@@ -125,9 +115,12 @@ namespace v2rayN.Forms
             }
 
             chkIgnoreGeoUpdateCore.Checked = config.ignoreGeoUpdateCore;
-            txtautoUpdateInterval.Text = config.autoUpdateInterval.ToString();
             chkEnableAutoAdjustMainLvColWidth.Checked = config.uiItem.enableAutoAdjustMainLvColWidth;
             chkEnableSecurityProtocolTls13.Checked = config.enableSecurityProtocolTls13;
+
+            txtautoUpdateInterval.Text = config.autoUpdateInterval.ToString();
+            txtautoUpdateSubInterval.Text = config.autoUpdateSubInterval.ToString();
+            txttrayMenuServersLimit.Text = config.trayMenuServersLimit.ToString();
         }
 
         private void InitCoreType()
@@ -210,6 +203,7 @@ namespace v2rayN.Forms
             string protocol = cmbprotocol.Text.TrimEx();
             bool udpEnabled = chkudpEnabled.Checked;
             bool sniffingEnabled = chksniffingEnabled.Checked;
+            bool allowLANConn = chkAllowLANConn.Checked;
             if (Utils.IsNullOrEmpty(localPort) || !Utils.IsNumberic(localPort))
             {
                 UI.Show(ResUI.FillLocalListeningPort);
@@ -239,40 +233,15 @@ namespace v2rayN.Forms
             config.inbound[0].protocol = protocol;
             config.inbound[0].udpEnabled = udpEnabled;
             config.inbound[0].sniffingEnabled = sniffingEnabled;
+            config.inbound[0].allowLANConn = allowLANConn;
+            config.inbound[0].user = txtuser.Text;
+            config.inbound[0].pass = txtpass.Text;
 
-            //本地监听2
-            string localPort2 = txtlocalPort2.Text.TrimEx();
-            string protocol2 = cmbprotocol2.Text.TrimEx();
-            bool udpEnabled2 = chkudpEnabled2.Checked;
-            bool sniffingEnabled2 = chksniffingEnabled2.Checked;
-            if (chkAllowIn2.Checked)
+            if (config.inbound.Count > 1)
             {
-                if (Utils.IsNullOrEmpty(localPort2) || !Utils.IsNumberic(localPort2))
-                {
-                    UI.Show(ResUI.FillLocalListeningPort);
-                    return -1;
-                }
-                if (Utils.IsNullOrEmpty(protocol2))
-                {
-                    UI.Show(ResUI.PleaseSelectProtocol);
-                    return -1;
-                }
-                if (config.inbound.Count < 2)
-                {
-                    config.inbound.Add(new Mode.InItem());
-                }
-                config.inbound[1].localPort = Utils.ToInt(localPort2);
-                config.inbound[1].protocol = protocol2;
-                config.inbound[1].udpEnabled = udpEnabled2;
-                config.inbound[1].sniffingEnabled = sniffingEnabled2;
+                config.inbound.RemoveAt(1);
             }
-            else
-            {
-                if (config.inbound.Count > 1)
-                {
-                    config.inbound.RemoveAt(1);
-                }
-            }
+
 
             //日志     
             config.logEnabled = logEnabled;
@@ -287,6 +256,8 @@ namespace v2rayN.Forms
             config.defAllowInsecure = chkdefAllowInsecure.Checked;
 
             config.systemProxyExceptions = txtsystemProxyExceptions.Text.TrimEx();
+
+            config.systemProxyAdvancedProtocol = cmbSystemProxyAdvancedProtocol.Text.TrimEx();
 
             return 0;
         }
@@ -336,18 +307,18 @@ namespace v2rayN.Forms
             //开机自动启动
             Utils.SetAutoRun(chkAutoRun.Checked);
 
-            config.allowLANConn = chkAllowLANConn.Checked;
-
             bool lastEnableStatistics = config.enableStatistics;
             config.enableStatistics = chkEnableStatistics.Checked;
             config.statisticsFreshRate = (int)cbFreshrate.SelectedValue;
             config.keepOlderDedupl = chkKeepOlderDedupl.Checked;
 
             config.ignoreGeoUpdateCore = chkIgnoreGeoUpdateCore.Checked;
-            config.autoUpdateInterval = Utils.ToInt(txtautoUpdateInterval.Text);
             config.uiItem.enableAutoAdjustMainLvColWidth = chkEnableAutoAdjustMainLvColWidth.Checked;
             config.enableSecurityProtocolTls13 = chkEnableSecurityProtocolTls13.Checked;
 
+            config.autoUpdateInterval = Utils.ToInt(txtautoUpdateInterval.Text);
+            config.autoUpdateSubInterval = Utils.ToInt(txtautoUpdateSubInterval.Text);
+            config.trayMenuServersLimit = Utils.ToInt(txttrayMenuServersLimit.Text);
             return 0;
         }
 
@@ -367,17 +338,6 @@ namespace v2rayN.Forms
             this.DialogResult = DialogResult.Cancel;
         }
 
-        private void chkAllowIn2_CheckedChanged(object sender, EventArgs e)
-        {
-            chkAllowIn2State();
-        }
-        private void chkAllowIn2State()
-        {
-            bool blAllow2 = chkAllowIn2.Checked;
-            txtlocalPort2.Enabled =
-            cmbprotocol2.Enabled =
-            chkudpEnabled2.Enabled = blAllow2;
-        }
 
         private void linkDnsObjectDoc_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
@@ -388,5 +348,6 @@ namespace v2rayN.Forms
         {
             Process.Start(Utils.GetPath("EnableLoopback.exe"));
         }
+
     }
 }

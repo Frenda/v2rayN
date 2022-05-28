@@ -109,6 +109,10 @@ namespace v2rayN.Handler
                 }
                 else
                 {
+                    if (coreInfo == null || coreInfo.coreExes == null)
+                    {
+                        return;
+                    }
                     foreach (string vName in coreInfo.coreExes)
                     {
                         Process[] existing = Process.GetProcessesByName(vName);
@@ -250,7 +254,7 @@ namespace v2rayN.Handler
 
             try
             {
-                string fileName = V2rayFindexe(new List<string> { "xray" });
+                string fileName = V2rayFindexe(new List<string> { "xray", "wv2ray", "v2ray" });
                 if (fileName == "") return -1;
 
                 Process p = new Process

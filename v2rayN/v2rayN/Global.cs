@@ -15,7 +15,9 @@ namespace v2rayN
         public const string xrayCoreUrl = "https://github.com/XTLS/Xray-core/releases";
         public const string NUrl = @"https://github.com/2dust/v2rayN/releases";
         public const string clashCoreUrl = "https://github.com/Dreamacro/clash/releases";
+        public const string clashMetaCoreUrl = "https://github.com/MetaCubeX/Clash.Meta/releases";
         public const string hysteriaCoreUrl = "https://github.com/HyNetwork/hysteria/releases";
+        public const string naiveproxyCoreUrl = "https://github.com/klzgrad/naiveproxy/releases";
 
 
 
@@ -64,8 +66,9 @@ namespace v2rayN
         /// </summary>
         public const string v2raySampleHttpresponseFileName = "v2rayN.Sample.SampleHttpresponse.txt";
 
-
         public const string CustomRoutingFileName = "v2rayN.Sample.custom_routing_";
+
+        public const string v2raySampleInbound = "v2rayN.Sample.SampleInbound.txt";
 
 
         /// <summary>
@@ -111,6 +114,8 @@ namespace v2rayN
 
         public const string InboundSocks = "socks";
         public const string InboundHttp = "http";
+        public const string InboundSocks2 = "socks2";
+        public const string InboundHttp2 = "http2";
         public const string Loopback = "127.0.0.1";
         public const string InboundAPITagName = "api";
         public const string InboundAPIProtocal = "dokodemo-door";
@@ -194,6 +199,13 @@ namespace v2rayN
         public const string StatisticLogOverall = "StatisticLogOverall.json";
 
         public const string IEProxyExceptions = "localhost;127.*;10.*;172.16.*;172.17.*;172.18.*;172.19.*;172.20.*;172.21.*;172.22.*;172.23.*;172.24.*;172.25.*;172.26.*;172.27.*;172.28.*;172.29.*;172.30.*;172.31.*;192.168.*";
+        public static readonly List<string> IEProxyProtocols = new List<string> {
+                        "{ip}:{http_port}",
+                        "socks={ip}:{socks_port}",
+                        "http={ip}:{http_port};https={ip}:{http_port};ftp={ip}:{http_port};socks={ip}:{socks_port}",
+                        "http=http://{ip}:{http_port};https=http://{ip}:{http_port}",
+                        ""
+                    };
 
         public const string RoutingRuleComma = "<COMMA>";
 
@@ -218,31 +230,6 @@ namespace v2rayN
         {
             get; set;
         }
-
-        /// <summary>
-        /// 是否开启全局代理(http)
-        /// </summary>
-        public static bool sysAgent
-        {
-            get; set;
-        }
-
-        /// <summary>
-        /// socks端口
-        /// </summary>
-        public static int socksPort
-        {
-            get; set;
-        }
-
-        /// <summary>
-        /// http端口
-        /// </summary>
-        public static int httpPort
-        {
-            get; set;
-        }
-
 
         /// <summary>
         ///  
