@@ -19,7 +19,7 @@ namespace v2rayN.Forms
         private void OptionSettingForm_Load(object sender, EventArgs e)
         {
             cmbSystemProxyAdvancedProtocol.Items.AddRange(Global.IEProxyProtocols.ToArray());
-
+           
             InitBase();
 
             InitKCP();
@@ -56,6 +56,7 @@ namespace v2rayN.Forms
 
             //remoteDNS
             txtremoteDNS.Text = config.remoteDNS;
+            cmbdomainStrategy4Freedom.Text = config.domainStrategy4Freedom;
 
             chkdefAllowInsecure.Checked = config.defAllowInsecure;
 
@@ -88,31 +89,8 @@ namespace v2rayN.Forms
             chkAutoRun.Checked = Utils.IsAutoRun();
 
             chkEnableStatistics.Checked = config.enableStatistics;
+            numStatisticsFreshRate.Value = config.statisticsFreshRate;
             chkKeepOlderDedupl.Checked = config.keepOlderDedupl;
-
-            ComboItem[] cbSource = new ComboItem[]
-            {
-                new ComboItem{ID = (int)Global.StatisticsFreshRate.quick, Text = ResUI.QuickFresh},
-                new ComboItem{ID = (int)Global.StatisticsFreshRate.medium, Text = ResUI.MediumFresh},
-                new ComboItem{ID = (int)Global.StatisticsFreshRate.slow, Text = ResUI.SlowFresh},
-            };
-            cbFreshrate.DataSource = cbSource;
-
-            cbFreshrate.DisplayMember = "Text";
-            cbFreshrate.ValueMember = "ID";
-
-            switch (config.statisticsFreshRate)
-            {
-                case (int)Global.StatisticsFreshRate.quick:
-                    cbFreshrate.SelectedItem = cbSource[0];
-                    break;
-                case (int)Global.StatisticsFreshRate.medium:
-                    cbFreshrate.SelectedItem = cbSource[1];
-                    break;
-                case (int)Global.StatisticsFreshRate.slow:
-                    cbFreshrate.SelectedItem = cbSource[2];
-                    break;
-            }
 
             chkIgnoreGeoUpdateCore.Checked = config.ignoreGeoUpdateCore;
             chkEnableAutoAdjustMainLvColWidth.Checked = config.uiItem.enableAutoAdjustMainLvColWidth;
@@ -120,6 +98,7 @@ namespace v2rayN.Forms
 
             txtautoUpdateInterval.Text = config.autoUpdateInterval.ToString();
             txtautoUpdateSubInterval.Text = config.autoUpdateSubInterval.ToString();
+            chkEnableCheckPreReleaseUpdate.Checked = config.checkPreReleaseUpdate;
             txttrayMenuServersLimit.Text = config.trayMenuServersLimit.ToString();
         }
 
@@ -177,7 +156,7 @@ namespace v2rayN.Forms
 
             if (ConfigHandler.SaveConfig(ref config) == 0)
             {
-                this.DialogResult = DialogResult.OK;
+                DialogResult = DialogResult.OK;
             }
             else
             {
@@ -252,6 +231,7 @@ namespace v2rayN.Forms
 
             //remoteDNS          
             config.remoteDNS = txtremoteDNS.Text.TrimEx();
+            config.domainStrategy4Freedom = cmbdomainStrategy4Freedom.Text;
 
             config.defAllowInsecure = chkdefAllowInsecure.Checked;
 
@@ -309,7 +289,12 @@ namespace v2rayN.Forms
 
             bool lastEnableStatistics = config.enableStatistics;
             config.enableStatistics = chkEnableStatistics.Checked;
-            config.statisticsFreshRate = (int)cbFreshrate.SelectedValue;
+            config.statisticsFreshRate = Convert.ToInt32(numStatisticsFreshRate.Value);
+            if (config.statisticsFreshRate > 100 || config.statisticsFreshRate < 1)
+            {
+                config.statisticsFreshRate = 1;
+            }
+
             config.keepOlderDedupl = chkKeepOlderDedupl.Checked;
 
             config.ignoreGeoUpdateCore = chkIgnoreGeoUpdateCore.Checked;
@@ -318,6 +303,7 @@ namespace v2rayN.Forms
 
             config.autoUpdateInterval = Utils.ToInt(txtautoUpdateInterval.Text);
             config.autoUpdateSubInterval = Utils.ToInt(txtautoUpdateSubInterval.Text);
+            config.checkPreReleaseUpdate = chkEnableCheckPreReleaseUpdate.Checked;
             config.trayMenuServersLimit = Utils.ToInt(txttrayMenuServersLimit.Text);
             return 0;
         }
@@ -335,7 +321,7 @@ namespace v2rayN.Forms
 
         private void btnClose_Click(object sender, EventArgs e)
         {
-            this.DialogResult = DialogResult.Cancel;
+            DialogResult = DialogResult.Cancel;
         }
 
 

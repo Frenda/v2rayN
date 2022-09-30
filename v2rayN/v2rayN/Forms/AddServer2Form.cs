@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
@@ -18,11 +19,15 @@ namespace v2rayN.Forms
 
         private void AddServer2Form_Load(object sender, EventArgs e)
         {
-            cmbCoreType.Items.AddRange(Global.coreTypes.ToArray());
-            cmbCoreType.Items.Add("clash");
-            cmbCoreType.Items.Add("clash_meta"); 
-            cmbCoreType.Items.Add("hysteria");
-            cmbCoreType.Items.Add("naiveproxy");
+            List<string> coreTypes = new List<string>();
+            foreach (ECoreType it in Enum.GetValues(typeof(ECoreType)))
+            {
+                if (it == ECoreType.v2rayN)
+                    continue;
+                coreTypes.Add(it.ToString());
+            }
+
+            cmbCoreType.Items.AddRange(coreTypes.ToArray());
             cmbCoreType.Items.Add(string.Empty);
 
             txtAddress.ReadOnly = true;
@@ -32,8 +37,10 @@ namespace v2rayN.Forms
             }
             else
             {
-                vmessItem = new VmessItem();
-                vmessItem.groupId = groupId;
+                vmessItem = new VmessItem
+                {
+                    groupId = groupId
+                };
                 ClearServer();
             }
         }
@@ -45,15 +52,9 @@ namespace v2rayN.Forms
         {
             txtRemarks.Text = vmessItem.remarks;
             txtAddress.Text = vmessItem.address;
+            txtPreSocksPort.Text = vmessItem.preSocksPort.ToString();
 
-            if (vmessItem.coreType == null)
-            {
-                cmbCoreType.Text = string.Empty;
-            }
-            else
-            {
-                cmbCoreType.Text = vmessItem.coreType.ToString();
-            }
+            cmbCoreType.Text = vmessItem.coreType == null ? string.Empty : vmessItem.coreType.ToString();
         }
 
 
@@ -79,6 +80,8 @@ namespace v2rayN.Forms
                 return;
             }
             vmessItem.remarks = remarks;
+            vmessItem.preSocksPort = Utils.ToInt(txtPreSocksPort.Text);
+
             if (Utils.IsNullOrEmpty(cmbCoreType.Text))
             {
                 vmessItem.coreType = null;
@@ -90,7 +93,7 @@ namespace v2rayN.Forms
 
             if (ConfigHandler.EditCustomServer(ref config, vmessItem) == 0)
             {
-                this.DialogResult = DialogResult.OK;
+                DialogResult = DialogResult.OK;
             }
             else
             {
@@ -100,14 +103,7 @@ namespace v2rayN.Forms
 
         private void btnClose_Click(object sender, EventArgs e)
         {
-            if (Utils.IsNullOrEmpty(vmessItem.indexId))
-            {
-                this.DialogResult = DialogResult.Cancel;
-            }
-            else
-            {
-                this.DialogResult = DialogResult.OK;
-            }
+            DialogResult = Utils.IsNullOrEmpty(vmessItem.indexId) ? DialogResult.Cancel : DialogResult.OK;
         }
 
         private void btnBrowse_Click(object sender, EventArgs e)

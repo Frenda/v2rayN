@@ -54,11 +54,9 @@ namespace v2rayN.Handler
                     //Mux
                     muxEnabled = false,
 
-                    // 默认不开启统计
                     enableStatistics = false,
 
-                    // 默认中等刷新率
-                    statisticsFreshRate = (int)Global.StatisticsFreshRate.medium,
+                    statisticsFreshRate = 1,
 
                     enableRoutingAdvanced = true
                 };
@@ -97,10 +95,10 @@ namespace v2rayN.Handler
             {
                 config.domainStrategy = "IPIfNonMatch";
             }
-            if (Utils.IsNullOrEmpty(config.domainMatcher))
-            {
-                config.domainMatcher = "linear";
-            }
+            //if (Utils.IsNullOrEmpty(config.domainMatcher))
+            //{
+            //    config.domainMatcher = "linear";
+            //}
 
             //kcp
             if (config.kcpItem == null)
@@ -158,7 +156,10 @@ namespace v2rayN.Handler
             {
                 config.groupItem = new List<GroupItem>();
             }
-
+            if (config.statisticsFreshRate > 100 || config.statisticsFreshRate < 1)
+            {
+                config.statisticsFreshRate = 1;
+            }
 
             if (config == null
                 || config.vmess.Count <= 0
@@ -245,7 +246,7 @@ namespace v2rayN.Handler
         /// <returns></returns>
         public static int AddServer(ref Config config, VmessItem vmessItem, bool toFile = true)
         {
-            vmessItem.configType = EConfigType.Vmess;
+            vmessItem.configType = EConfigType.VMess;
 
             vmessItem.address = vmessItem.address.TrimEx();
             vmessItem.id = vmessItem.id.TrimEx();
@@ -304,7 +305,7 @@ namespace v2rayN.Handler
             {
                 VmessItem vmessItem = Utils.DeepCopy(item);
                 vmessItem.indexId = string.Empty;
-                vmessItem.remarks = string.Format("{0}-clone", item.remarks);
+                vmessItem.remarks = $"{item.remarks}-clone";
 
                 if (vmessItem.configType == EConfigType.Custom)
                 {
@@ -469,7 +470,7 @@ namespace v2rayN.Handler
                 return -1;
             }
             var ext = Path.GetExtension(fileName);
-            string newFileName = string.Format("{0}{1}", Utils.GetGUID(), ext);
+            string newFileName = $"{Utils.GetGUID()}{ext}";
             //newFileName = Path.Combine(Utils.GetTempPath(), newFileName);
 
             try
@@ -480,8 +481,9 @@ namespace v2rayN.Handler
                     File.Delete(fileName);
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                Utils.SaveLog(ex.Message, ex);
                 return -1;
             }
 
@@ -489,7 +491,7 @@ namespace v2rayN.Handler
             vmessItem.configType = EConfigType.Custom;
             if (Utils.IsNullOrEmpty(vmessItem.remarks))
             {
-                vmessItem.remarks = string.Format("import custom@{0}", DateTime.Now.ToShortDateString());
+                vmessItem.remarks = $"import custom@{DateTime.Now.ToShortDateString()}";
             }
 
 
@@ -527,7 +529,7 @@ namespace v2rayN.Handler
             vmessItem.id = vmessItem.id.TrimEx();
             vmessItem.security = vmessItem.security.TrimEx();
 
-            if (!LazyConfig.Instance.GetShadowsocksSecuritys().Contains(vmessItem.security))
+            if (!LazyConfig.Instance.GetShadowsocksSecuritys(vmessItem).Contains(vmessItem.security))
             {
                 return -1;
             }
@@ -609,7 +611,7 @@ namespace v2rayN.Handler
                 {
                     return 0;
                 }
-                if (vmessItem.configType == EConfigType.Vmess)
+                if (vmessItem.configType == EConfigType.VMess)
                 {
                     string path = "";
                     string host = "";
@@ -812,9 +814,10 @@ namespace v2rayN.Handler
                 && o.headerType == n.headerType
                 && o.requestHost == n.requestHost
                 && o.path == n.path
-                && o.streamSecurity == n.streamSecurity
+                && (o.configType == EConfigType.Trojan || o.streamSecurity == n.streamSecurity)
                 && o.flow == n.flow
-                && (remarks ? o.remarks == n.remarks : true);
+                && o.sni == n.sni
+                && (!remarks || o.remarks == n.remarks);
         }
 
         private static int RemoveVmessItem(Config config, int index)
@@ -896,7 +899,7 @@ namespace v2rayN.Handler
                 //groupId
                 vmessItem.groupId = groupId;
 
-                if (vmessItem.configType == EConfigType.Vmess)
+                if (vmessItem.configType == EConfigType.VMess)
                 {
                     if (AddServer(ref config, vmessItem, false) == 0)
                     {
@@ -976,7 +979,9 @@ namespace v2rayN.Handler
             else if (clipboardData.IndexOf("server") >= 0
                 && clipboardData.IndexOf("up") >= 0
                 && clipboardData.IndexOf("down") >= 0
-                && clipboardData.IndexOf("listen") >= 0)
+                && clipboardData.IndexOf("listen") >= 0
+                && clipboardData.IndexOf("<html>") < 0
+                && clipboardData.IndexOf("<body>") < 0)
             {
                 var fileName = Utils.GetTempPath($"{Utils.GetGUID(false)}.json");
                 File.WriteAllText(fileName, clipboardData);
@@ -987,7 +992,9 @@ namespace v2rayN.Handler
             }
             //Is naiveproxy configuration
             else if (clipboardData.IndexOf("listen") >= 0
-                && clipboardData.IndexOf("proxy") >= 0)
+                && clipboardData.IndexOf("proxy") >= 0
+                && clipboardData.IndexOf("<html>") < 0
+                && clipboardData.IndexOf("<body>") < 0)
             {
                 var fileName = Utils.GetTempPath($"{Utils.GetGUID(false)}.json");
                 File.WriteAllText(fileName, clipboardData);
@@ -1051,7 +1058,7 @@ namespace v2rayN.Handler
             if (lstSsServer == null || lstSsServer.Count <= 0)
             {
                 var ssSIP008 = Utils.FromJson<SsSIP008>(clipboardData);
-                if (ssSIP008 != null && ssSIP008.servers != null && ssSIP008.servers.Count > 0)
+                if (ssSIP008?.servers != null && ssSIP008.servers.Count > 0)
                 {
                     lstSsServer = ssSIP008.servers;
                 }
@@ -1154,12 +1161,9 @@ namespace v2rayN.Handler
                 return -1;
             }
 
-            foreach (SubItem item in config.subItem)
+            foreach (var item in config.subItem.Where(item => Utils.IsNullOrEmpty(item.id)))
             {
-                if (Utils.IsNullOrEmpty(item.id))
-                {
-                    item.id = Utils.GetGUID(false);
-                }
+                item.id = Utils.GetGUID(false);
             }
 
             ToJsonFile(config);
@@ -1203,12 +1207,9 @@ namespace v2rayN.Handler
                 return -1;
             }
 
-            foreach (GroupItem item in config.groupItem)
+            foreach (var item in config.groupItem.Where(item => Utils.IsNullOrEmpty(item.id)))
             {
-                if (Utils.IsNullOrEmpty(item.id))
-                {
-                    item.id = Utils.GetGUID(false);
-                }
+                item.id = Utils.GetGUID(false);
             }
 
             ToJsonFile(config);

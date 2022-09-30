@@ -24,6 +24,7 @@ using System.Web;
 using log4net;
 using System.Linq;
 using System.Security.Cryptography;
+using System.Runtime.InteropServices;
 
 namespace v2rayN
 {
@@ -593,6 +594,12 @@ namespace v2rayN
         {
             try
             {
+                //clear
+                if (!RegReadValue(autoRunRegPath, "v2rayNAutoRun", "").IsNullOrEmpty())
+                {
+                    RegWriteValue(autoRunRegPath, "v2rayNAutoRun", "");
+                }
+
                 string value = RegReadValue(autoRunRegPath, autoRunName, "");
                 string exePath = GetExePath();
                 if (value?.Equals(exePath) == true || value?.Equals($"\"{exePath}\"") == true)
@@ -693,7 +700,7 @@ namespace v2rayN
         /// </summary>
         /// <param name="release">需要的版本4.6.2=394802;4.8=528040</param>
         /// <returns></returns>
-        public static bool GetDotNetRelease(int release)
+        public static bool CheckForDotNetVersion(int release = 528040)
         {
             const string subkey = @"SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Full\";
             using (RegistryKey ndpKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32).OpenSubKey(subkey))
@@ -706,6 +713,13 @@ namespace v2rayN
             }
         }
 
+        public static string MainMsgFilterKey
+        {
+            get
+            {
+                return $"MainMsgFilter_{GetMD5(StartupPath())}";
+            }
+        }
         #endregion
 
         #region 测速
@@ -951,7 +965,7 @@ namespace v2rayN
 
         public static string GetDownloadFileName(string url)
         {
-            var fileName = System.IO.Path.GetFileName(url);
+            var fileName = Path.GetFileName(url);
             fileName += "_temp";
 
             return fileName;
@@ -1111,5 +1125,30 @@ namespace v2rayN
 
         #endregion
 
+
+        #region Windows API
+
+        public static string WindowHwndKey
+        {
+            get
+            {
+                return $"WindowHwnd_{GetMD5(StartupPath())}";
+            }
+        }
+
+        [DllImport("user32.dll")]
+        public static extern bool SetProcessDPIAware();
+
+        [DllImport("user32.dll")]
+        public static extern int ShowWindow(IntPtr hwnd, int nCmdShow);
+
+        [DllImport("user32.dll")]
+        public static extern int SwitchToThisWindow(IntPtr hwnd, bool fUnknown);
+
+        [DllImport("user32.dll")]
+        public static extern bool IsWindow(IntPtr hwnd);
+
+
+        #endregion
     }
 }

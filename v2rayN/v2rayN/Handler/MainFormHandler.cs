@@ -24,10 +24,8 @@ namespace v2rayN.Handler
         //private List<int> _selecteds;
         //private Thread _workThread;
         //Action<int, string> _updateFunc;
-        public static MainFormHandler Instance
-        {
-            get { return instance.Value; }
-        }
+        public static MainFormHandler Instance => instance.Value;
+
         public Icon GetNotifyIcon(Config config, Icon def)
         {
             try
@@ -84,7 +82,7 @@ namespace v2rayN.Handler
                 int index = (int)config.sysProxyType;
                 if (index > 0)
                 {
-                    color = (new Color[] { Color.Red, Color.Purple, Color.DarkGreen, Color.Orange, Color.DarkSlateBlue, Color.RoyalBlue })[index - 1];
+                    color = (new[] { Color.Red, Color.Purple, Color.DarkGreen, Color.Orange, Color.DarkSlateBlue, Color.RoyalBlue })[index - 1];
                 }
 
                 int width = 128;
@@ -94,8 +92,11 @@ namespace v2rayN.Handler
                 Graphics graphics = Graphics.FromImage(bitmap);
                 SolidBrush drawBrush = new SolidBrush(color);
 
-                graphics.FillRectangle(drawBrush, new Rectangle(0, 0, width, height));
+                graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+                //graphics.FillRectangle(drawBrush, new Rectangle(0, 0, width, height));                
                 graphics.DrawImage(new Bitmap(item.customIcon), 0, 0, width, height);
+                graphics.FillEllipse(drawBrush, width / 2, width / 2, width / 2, width / 2);
+
                 Icon createdIcon = Icon.FromHandle(bitmap.GetHicon());
 
                 drawBrush.Dispose();
@@ -117,8 +118,7 @@ namespace v2rayN.Handler
             {
                 return;
             }
-            if (item.configType != EConfigType.Vmess
-                && item.configType != EConfigType.VLESS)
+            if (item.configType == EConfigType.Custom)
             {
                 UI.Show(ResUI.NonVmessService);
                 return;
@@ -157,7 +157,7 @@ namespace v2rayN.Handler
             {
                 return;
             }
-            if (item.configType != EConfigType.Vmess
+            if (item.configType != EConfigType.VMess
                 && item.configType != EConfigType.VLESS)
             {
                 UI.Show(ResUI.NonVmessService);
@@ -232,6 +232,46 @@ namespace v2rayN.Handler
             }
         }
 
+        public bool RestoreGuiNConfig(ref Config config)
+        {
+            var fileContent = string.Empty;
+            using (OpenFileDialog fileDialog = new OpenFileDialog())
+            {
+                fileDialog.InitialDirectory = Utils.GetBackupPath("");
+                fileDialog.Filter = "guiNConfig|*.json|All|*.*";
+                fileDialog.FilterIndex = 2;
+                fileDialog.RestoreDirectory = true;
+
+                if (fileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    fileContent = Utils.LoadResource(fileDialog.FileName);
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            if (Utils.IsNullOrEmpty(fileContent))
+            {
+                UI.ShowWarning(ResUI.OperationFailed);
+                return false;
+            }
+
+            var resConfig = Utils.FromJson<Config>(fileContent);
+            if (resConfig == null)
+            {
+                UI.ShowWarning(ResUI.OperationFailed);
+                return false;
+            }
+            //backup first
+            BackupGuiNConfig(config, true);
+
+            config = resConfig;
+            LazyConfig.Instance.SetConfig(ref config);
+
+            return true;
+        }
+
         public void UpdateTask(Config config, Action<bool, string> update)
         {
             Task.Run(() => UpdateTaskRun(config, update));
@@ -254,7 +294,7 @@ namespace v2rayN.Handler
                 {
                     if ((dtNow - autoUpdateSubTime).Hours % config.autoUpdateSubInterval == 0)
                     {
-                        updateHandle.UpdateSubscriptionProcess(config, true, (bool success, string msg) =>
+                        updateHandle.UpdateSubscriptionProcess(config, "", true, (bool success, string msg) =>
                         {
                             update(success, msg);
                             if (success)

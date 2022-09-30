@@ -85,6 +85,14 @@ namespace v2rayN.Mode
         }
 
         /// <summary>
+        /// Outbound Freedom domainStrategy
+        /// </summary>
+        public string domainStrategy4Freedom
+        {
+            get; set;
+        }
+
+        /// <summary>
         /// 是否允许不安全连接
         /// </summary>
         public bool defAllowInsecure
@@ -129,6 +137,8 @@ namespace v2rayN.Mode
         public int autoUpdateInterval { get; set; } = 0;
 
         public int autoUpdateSubInterval { get; set; } = 0;
+        
+        public bool checkPreReleaseUpdate { get; set; } = false;
 
         public bool enableSecurityProtocolTls13
         {
@@ -282,7 +292,7 @@ namespace v2rayN.Mode
         public VmessItem()
         {
             indexId = string.Empty;
-            configType = EConfigType.Vmess;
+            configType = EConfigType.VMess;
             configVersion = 2;
             sort = 0;
             address = string.Empty;
@@ -323,7 +333,7 @@ namespace v2rayN.Mode
             }
             switch (configType)
             {
-                case EConfigType.Vmess:
+                case EConfigType.VMess:
                 case EConfigType.Shadowsocks:
                 case EConfigType.Socks:
                 case EConfigType.VLESS:
@@ -553,7 +563,13 @@ namespace v2rayN.Mode
         {
             get; set;
         } = string.Empty;
+
         public ECoreType? coreType
+        {
+            get; set;
+        }
+
+        public int preSocksPort
         {
             get; set;
         }

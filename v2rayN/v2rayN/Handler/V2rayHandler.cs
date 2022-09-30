@@ -24,7 +24,7 @@ namespace v2rayN.Handler
         private static string v2rayConfigRes = Global.v2rayConfigFileName;
         private CoreInfo coreInfo;
         public event ProcessDelegate ProcessEvent;
-        //private int processId = 0;
+        private int processId = 0;
         private Process _process;
 
         public V2rayHandler()
@@ -51,14 +51,30 @@ namespace v2rayN.Handler
                     return;
                 }
                 string fileName = Utils.GetPath(v2rayConfigRes);
-                if (V2rayConfigHandler.GenerateClientConfig(item, fileName, false, out string msg) != 0)
+                if (V2rayConfigHandler.GenerateClientConfig(item, fileName, out string msg, out string content) != 0)
                 {
                     ShowMsg(false, msg);
                 }
                 else
                 {
-                    ShowMsg(true, msg);
+                    ShowMsg(false, msg);
+                    ShowMsg(true, $"[{config.GetGroupRemarks(item.groupId)}] {item.GetSummary()}");
                     V2rayRestart();
+                }
+
+                //start a socks service
+                if (item.configType == EConfigType.Custom && item.preSocksPort > 0)
+                {
+                    var itemSocks = new VmessItem()
+                    {
+                        configType = EConfigType.Socks,
+                        address = Global.Loopback,
+                        port = item.preSocksPort
+                    };
+                    if (V2rayConfigHandler.GenerateClientConfig(itemSocks, null, out string msg2, out string configStr) == 0)
+                    {
+                        processId = V2rayStartNew(configStr);
+                    }
                 }
             }
         }
@@ -127,27 +143,12 @@ namespace v2rayN.Handler
                     }
                 }
 
-                //bool blExist = true;
-                //if (processId > 0)
-                //{
-                //    Process p1 = Process.GetProcessById(processId);
-                //    if (p1 != null)
-                //    {
-                //        p1.Kill();
-                //        blExist = false;
-                //    }
-                //}
-                //if (blExist)
-                //{
-                //    foreach (string vName in lstV2ray)
-                //    {
-                //        Process[] killPro = Process.GetProcessesByName(vName);
-                //        foreach (Process p in killPro)
-                //        {
-                //            p.Kill();
-                //        }
-                //    }
-                //}
+                if (processId > 0)
+                {
+                    V2rayStopPid(processId);
+                    processId = 0;
+                }
+
             }
             catch (Exception ex)
             {
@@ -175,7 +176,7 @@ namespace v2rayN.Handler
             string fileName = string.Empty;
             foreach (string name in lstCoreTemp)
             {
-                string vName = string.Format("{0}.exe", name);
+                string vName = $"{name}.exe";
                 vName = Utils.GetPath(vName);
                 if (File.Exists(vName))
                 {
@@ -185,7 +186,7 @@ namespace v2rayN.Handler
             }
             if (Utils.IsNullOrEmpty(fileName))
             {
-                string msg = string.Format(ResUI.NotFoundCore, coreInfo.coreUrl);
+                string msg = string.Format(ResUI.NotFoundCore, string.Join(", ", lstCoreTemp.ToArray()), coreInfo.coreUrl);
                 ShowMsg(false, msg);
             }
             return fileName;
@@ -214,21 +215,21 @@ namespace v2rayN.Handler
                         RedirectStandardOutput = true,
                         RedirectStandardError = true,
                         CreateNoWindow = true,
-                        StandardOutputEncoding = Encoding.UTF8
+                        StandardOutputEncoding = Encoding.UTF8,
+                        StandardErrorEncoding = Encoding.UTF8
                     }
                 };
-                p.OutputDataReceived += new DataReceivedEventHandler((sender, e) =>
+                p.OutputDataReceived += (sender, e) =>
                 {
                     if (!String.IsNullOrEmpty(e.Data))
                     {
                         string msg = e.Data + Environment.NewLine;
                         ShowMsg(false, msg);
                     }
-                });
+                };
                 p.Start();
                 p.PriorityClass = ProcessPriorityClass.High;
                 p.BeginOutputReadLine();
-                //processId = p.Id;
                 _process = p;
 
                 if (p.WaitForExit(1000))
@@ -269,17 +270,18 @@ namespace v2rayN.Handler
                         RedirectStandardOutput = true,
                         RedirectStandardError = true,
                         CreateNoWindow = true,
-                        StandardOutputEncoding = Encoding.UTF8
+                        StandardOutputEncoding = Encoding.UTF8,
+                        StandardErrorEncoding = Encoding.UTF8
                     }
                 };
-                p.OutputDataReceived += new DataReceivedEventHandler((sender, e) =>
+                p.OutputDataReceived += (sender, e) =>
                 {
                     if (!String.IsNullOrEmpty(e.Data))
                     {
                         string msg = e.Data + Environment.NewLine;
                         ShowMsg(false, msg);
                     }
-                });
+                };
                 p.Start();
                 p.BeginOutputReadLine();
 

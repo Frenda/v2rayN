@@ -50,6 +50,8 @@
             this.txtlocalPort = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.cmbdomainStrategy4Freedom = new System.Windows.Forms.ComboBox();
+            this.label19 = new System.Windows.Forms.Label();
             this.linkDnsObjectDoc = new System.Windows.Forms.LinkLabel();
             this.txtremoteDNS = new System.Windows.Forms.TextBox();
             this.label14 = new System.Windows.Forms.Label();
@@ -68,6 +70,7 @@
             this.txtKcpmtu = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
             this.tabPage7 = new System.Windows.Forms.TabPage();
+            this.numStatisticsFreshRate = new System.Windows.Forms.NumericUpDown();
             this.txttrayMenuServersLimit = new System.Windows.Forms.TextBox();
             this.label17 = new System.Windows.Forms.Label();
             this.txtautoUpdateSubInterval = new System.Windows.Forms.TextBox();
@@ -79,7 +82,6 @@
             this.label15 = new System.Windows.Forms.Label();
             this.chkIgnoreGeoUpdateCore = new System.Windows.Forms.CheckBox();
             this.chkKeepOlderDedupl = new System.Windows.Forms.CheckBox();
-            this.cbFreshrate = new System.Windows.Forms.ComboBox();
             this.lbFreshrate = new System.Windows.Forms.Label();
             this.chkEnableStatistics = new System.Windows.Forms.CheckBox();
             this.chkAutoRun = new System.Windows.Forms.CheckBox();
@@ -106,12 +108,14 @@
             this.panel2 = new System.Windows.Forms.Panel();
             this.btnOK = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.chkEnableCheckPreReleaseUpdate = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.tabPage2.SuspendLayout();
             this.tabPage6.SuspendLayout();
             this.tabPage7.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numStatisticsFreshRate)).BeginInit();
             this.tabPageCoreType.SuspendLayout();
             this.tabPage3.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -268,12 +272,31 @@
             // 
             // tabPage2
             // 
+            this.tabPage2.Controls.Add(this.cmbdomainStrategy4Freedom);
+            this.tabPage2.Controls.Add(this.label19);
             this.tabPage2.Controls.Add(this.linkDnsObjectDoc);
             this.tabPage2.Controls.Add(this.txtremoteDNS);
             this.tabPage2.Controls.Add(this.label14);
             resources.ApplyResources(this.tabPage2, "tabPage2");
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // cmbdomainStrategy4Freedom
+            // 
+            this.cmbdomainStrategy4Freedom.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbdomainStrategy4Freedom.FormattingEnabled = true;
+            this.cmbdomainStrategy4Freedom.Items.AddRange(new object[] {
+            resources.GetString("cmbdomainStrategy4Freedom.Items"),
+            resources.GetString("cmbdomainStrategy4Freedom.Items1"),
+            resources.GetString("cmbdomainStrategy4Freedom.Items2"),
+            resources.GetString("cmbdomainStrategy4Freedom.Items3")});
+            resources.ApplyResources(this.cmbdomainStrategy4Freedom, "cmbdomainStrategy4Freedom");
+            this.cmbdomainStrategy4Freedom.Name = "cmbdomainStrategy4Freedom";
+            // 
+            // label19
+            // 
+            resources.ApplyResources(this.label19, "label19");
+            this.label19.Name = "label19";
             // 
             // linkDnsObjectDoc
             // 
@@ -379,6 +402,8 @@
             // 
             // tabPage7
             // 
+            this.tabPage7.Controls.Add(this.chkEnableCheckPreReleaseUpdate);
+            this.tabPage7.Controls.Add(this.numStatisticsFreshRate);
             this.tabPage7.Controls.Add(this.txttrayMenuServersLimit);
             this.tabPage7.Controls.Add(this.label17);
             this.tabPage7.Controls.Add(this.txtautoUpdateSubInterval);
@@ -390,13 +415,17 @@
             this.tabPage7.Controls.Add(this.label15);
             this.tabPage7.Controls.Add(this.chkIgnoreGeoUpdateCore);
             this.tabPage7.Controls.Add(this.chkKeepOlderDedupl);
-            this.tabPage7.Controls.Add(this.cbFreshrate);
             this.tabPage7.Controls.Add(this.lbFreshrate);
             this.tabPage7.Controls.Add(this.chkEnableStatistics);
             this.tabPage7.Controls.Add(this.chkAutoRun);
             resources.ApplyResources(this.tabPage7, "tabPage7");
             this.tabPage7.Name = "tabPage7";
             this.tabPage7.UseVisualStyleBackColor = true;
+            // 
+            // numStatisticsFreshRate
+            // 
+            resources.ApplyResources(this.numStatisticsFreshRate, "numStatisticsFreshRate");
+            this.numStatisticsFreshRate.Name = "numStatisticsFreshRate";
             // 
             // txttrayMenuServersLimit
             // 
@@ -458,13 +487,6 @@
             resources.ApplyResources(this.chkKeepOlderDedupl, "chkKeepOlderDedupl");
             this.chkKeepOlderDedupl.Name = "chkKeepOlderDedupl";
             this.chkKeepOlderDedupl.UseVisualStyleBackColor = true;
-            // 
-            // cbFreshrate
-            // 
-            this.cbFreshrate.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cbFreshrate.FormattingEnabled = true;
-            resources.ApplyResources(this.cbFreshrate, "cbFreshrate");
-            this.cbFreshrate.Name = "cbFreshrate";
             // 
             // lbFreshrate
             // 
@@ -636,6 +658,12 @@
             resources.ApplyResources(this.panel1, "panel1");
             this.panel1.Name = "panel1";
             // 
+            // chkEnableCheckPreReleaseUpdate
+            // 
+            resources.ApplyResources(this.chkEnableCheckPreReleaseUpdate, "chkEnableCheckPreReleaseUpdate");
+            this.chkEnableCheckPreReleaseUpdate.Name = "chkEnableCheckPreReleaseUpdate";
+            this.chkEnableCheckPreReleaseUpdate.UseVisualStyleBackColor = true;
+            // 
             // OptionSettingForm
             // 
             resources.ApplyResources(this, "$this");
@@ -657,6 +685,7 @@
             this.tabPage6.PerformLayout();
             this.tabPage7.ResumeLayout(false);
             this.tabPage7.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numStatisticsFreshRate)).EndInit();
             this.tabPageCoreType.ResumeLayout(false);
             this.tabPageCoreType.PerformLayout();
             this.tabPage3.ResumeLayout(false);
@@ -704,7 +733,6 @@
         private System.Windows.Forms.CheckBox chkAllowLANConn;
         private System.Windows.Forms.CheckBox chksniffingEnabled;
         private System.Windows.Forms.CheckBox chkEnableStatistics;
-        private System.Windows.Forms.ComboBox cbFreshrate;
         private System.Windows.Forms.Label lbFreshrate;
         private System.Windows.Forms.CheckBox chkKeepOlderDedupl;
         private System.Windows.Forms.CheckBox chkdefAllowInsecure;
@@ -746,5 +774,9 @@
         private System.Windows.Forms.Label label17;
         private System.Windows.Forms.ComboBox cmbSystemProxyAdvancedProtocol;
         private System.Windows.Forms.Label label18;
+        private System.Windows.Forms.NumericUpDown numStatisticsFreshRate;
+        private System.Windows.Forms.ComboBox cmbdomainStrategy4Freedom;
+        private System.Windows.Forms.Label label19;
+        private System.Windows.Forms.CheckBox chkEnableCheckPreReleaseUpdate;
     }
 }
