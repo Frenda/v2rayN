@@ -63,7 +63,7 @@ namespace v2rayN.Handler
                 }
 
                 //start a socks service
-                if (item.configType == EConfigType.Custom && item.preSocksPort > 0)
+                if (_process != null && !_process.HasExited && item.configType == EConfigType.Custom && item.preSocksPort > 0)
                 {
                     var itemSocks = new VmessItem()
                     {
@@ -212,29 +212,34 @@ namespace v2rayN.Handler
                         Arguments = coreInfo.arguments,
                         WorkingDirectory = Utils.StartupPath(),
                         UseShellExecute = false,
-                        RedirectStandardOutput = true,
-                        RedirectStandardError = true,
+                        RedirectStandardOutput = coreInfo.redirectInfo,
+                        RedirectStandardError = coreInfo.redirectInfo,
                         CreateNoWindow = true,
-                        StandardOutputEncoding = Encoding.UTF8,
-                        StandardErrorEncoding = Encoding.UTF8
+                        StandardOutputEncoding = coreInfo.redirectInfo ? Encoding.UTF8 : null,
+                        StandardErrorEncoding = coreInfo.redirectInfo ? Encoding.UTF8 : null,
                     }
                 };
-                p.OutputDataReceived += (sender, e) =>
+                if (coreInfo.redirectInfo)
                 {
-                    if (!String.IsNullOrEmpty(e.Data))
+                    p.OutputDataReceived += (sender, e) =>
                     {
-                        string msg = e.Data + Environment.NewLine;
-                        ShowMsg(false, msg);
-                    }
-                };
+                        if (!String.IsNullOrEmpty(e.Data))
+                        {
+                            string msg = e.Data + Environment.NewLine;
+                            ShowMsg(false, msg);
+                        }
+                    };
+                }
                 p.Start();
-                p.PriorityClass = ProcessPriorityClass.High;
-                p.BeginOutputReadLine();
+                if (coreInfo.redirectInfo)
+                {
+                    p.BeginOutputReadLine();
+                }
                 _process = p;
 
                 if (p.WaitForExit(1000))
                 {
-                    throw new Exception(p.StandardError.ReadToEnd());
+                    throw new Exception(coreInfo.redirectInfo ? p.StandardError.ReadToEnd() : "启动进程失败并退出 (Failed to start the process and exited)");
                 }
 
                 Global.processJob.AddProcess(p.Handle);

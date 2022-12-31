@@ -31,6 +31,8 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ServerTransportControl));
             this.gbTransport = new System.Windows.Forms.GroupBox();
             this.panTlsMore = new System.Windows.Forms.Panel();
+            this.labfingerprint = new System.Windows.Forms.Label();
+            this.cmbFingerprint = new System.Windows.Forms.ComboBox();
             this.clbAlpn = new System.Windows.Forms.CheckedListBox();
             this.label1 = new System.Windows.Forms.Label();
             this.txtSNI = new System.Windows.Forms.TextBox();
@@ -57,6 +59,7 @@
             // 
             // gbTransport
             // 
+            resources.ApplyResources(this.gbTransport, "gbTransport");
             this.gbTransport.Controls.Add(this.panTlsMore);
             this.gbTransport.Controls.Add(this.tipNetwork);
             this.gbTransport.Controls.Add(this.txtPath);
@@ -72,25 +75,38 @@
             this.gbTransport.Controls.Add(this.labHeaderType);
             this.gbTransport.Controls.Add(this.labRequestHost);
             this.gbTransport.Controls.Add(this.cmbHeaderType);
-            resources.ApplyResources(this.gbTransport, "gbTransport");
             this.gbTransport.Name = "gbTransport";
             this.gbTransport.TabStop = false;
             // 
             // panTlsMore
             // 
+            resources.ApplyResources(this.panTlsMore, "panTlsMore");
+            this.panTlsMore.Controls.Add(this.labfingerprint);
+            this.panTlsMore.Controls.Add(this.cmbFingerprint);
             this.panTlsMore.Controls.Add(this.clbAlpn);
             this.panTlsMore.Controls.Add(this.label1);
             this.panTlsMore.Controls.Add(this.txtSNI);
             this.panTlsMore.Controls.Add(this.labSNI);
             this.panTlsMore.Controls.Add(this.labAllowInsecure);
             this.panTlsMore.Controls.Add(this.cmbAllowInsecure);
-            resources.ApplyResources(this.panTlsMore, "panTlsMore");
             this.panTlsMore.Name = "panTlsMore";
+            // 
+            // labfingerprint
+            // 
+            resources.ApplyResources(this.labfingerprint, "labfingerprint");
+            this.labfingerprint.Name = "labfingerprint";
+            // 
+            // cmbFingerprint
+            // 
+            resources.ApplyResources(this.cmbFingerprint, "cmbFingerprint");
+            this.cmbFingerprint.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbFingerprint.FormattingEnabled = true;
+            this.cmbFingerprint.Name = "cmbFingerprint";
             // 
             // clbAlpn
             // 
-            this.clbAlpn.CheckOnClick = true;
             resources.ApplyResources(this.clbAlpn, "clbAlpn");
+            this.clbAlpn.CheckOnClick = true;
             this.clbAlpn.FormattingEnabled = true;
             this.clbAlpn.Items.AddRange(new object[] {
             resources.GetString("clbAlpn.Items"),
@@ -120,13 +136,13 @@
             // 
             // cmbAllowInsecure
             // 
+            resources.ApplyResources(this.cmbAllowInsecure, "cmbAllowInsecure");
             this.cmbAllowInsecure.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbAllowInsecure.FormattingEnabled = true;
             this.cmbAllowInsecure.Items.AddRange(new object[] {
             resources.GetString("cmbAllowInsecure.Items"),
             resources.GetString("cmbAllowInsecure.Items1"),
             resources.GetString("cmbAllowInsecure.Items2")});
-            resources.ApplyResources(this.cmbAllowInsecure, "cmbAllowInsecure");
             this.cmbAllowInsecure.Name = "cmbAllowInsecure";
             // 
             // tipNetwork
@@ -141,9 +157,9 @@
             // 
             // cmbNetwork
             // 
+            resources.ApplyResources(this.cmbNetwork, "cmbNetwork");
             this.cmbNetwork.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbNetwork.FormattingEnabled = true;
-            resources.ApplyResources(this.cmbNetwork, "cmbNetwork");
             this.cmbNetwork.Name = "cmbNetwork";
             this.cmbNetwork.SelectedIndexChanged += new System.EventHandler(this.cmbNetwork_SelectedIndexChanged);
             // 
@@ -174,9 +190,9 @@
             // 
             // cmbStreamSecurity
             // 
+            resources.ApplyResources(this.cmbStreamSecurity, "cmbStreamSecurity");
             this.cmbStreamSecurity.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbStreamSecurity.FormattingEnabled = true;
-            resources.ApplyResources(this.cmbStreamSecurity, "cmbStreamSecurity");
             this.cmbStreamSecurity.Name = "cmbStreamSecurity";
             this.cmbStreamSecurity.SelectedIndexChanged += new System.EventHandler(this.cmbStreamSecurity_SelectedIndexChanged);
             // 
@@ -202,9 +218,9 @@
             // 
             // cmbHeaderType
             // 
+            resources.ApplyResources(this.cmbHeaderType, "cmbHeaderType");
             this.cmbHeaderType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbHeaderType.FormattingEnabled = true;
-            resources.ApplyResources(this.cmbHeaderType, "cmbHeaderType");
             this.cmbHeaderType.Name = "cmbHeaderType";
             // 
             // ServerTransportControl
@@ -246,5 +262,7 @@
         private System.Windows.Forms.ComboBox cmbHeaderType;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.CheckedListBox clbAlpn;
+        private System.Windows.Forms.Label labfingerprint;
+        private System.Windows.Forms.ComboBox cmbFingerprint;
     }
 }
