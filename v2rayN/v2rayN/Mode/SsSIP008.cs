@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace v2rayN.Mode
+﻿namespace v2rayN.Mode
 {
     public class SsSIP008
     {
@@ -18,5 +15,4 @@ namespace v2rayN.Mode
         public string password { get; set; }
         public string plugin { get; set; }
     }
-
 }
