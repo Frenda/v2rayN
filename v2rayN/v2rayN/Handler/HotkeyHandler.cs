@@ -4,7 +4,8 @@ using System.Text;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interop;
-using v2rayN.Mode;
+using v2rayN.Enums;
+using v2rayN.Models;
 using v2rayN.Resx;
 
 namespace v2rayN.Handler

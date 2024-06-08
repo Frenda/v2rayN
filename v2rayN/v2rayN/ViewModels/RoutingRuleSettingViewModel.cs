@@ -1,13 +1,12 @@
 ﻿using DynamicData.Binding;
-using Microsoft.Win32;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using Splat;
 using System.Reactive;
 using System.Windows;
-using v2rayN.Base;
+using v2rayN.Enums;
 using v2rayN.Handler;
-using v2rayN.Mode;
+using v2rayN.Models;
 using v2rayN.Resx;
 using v2rayN.Views;
 using Application = System.Windows.Application;
@@ -60,7 +59,7 @@ namespace v2rayN.ViewModels
             else
             {
                 SelectedRouting = routingItem;
-                _rules = Utils.FromJson<List<RulesItem>>(SelectedRouting.ruleSet);
+                _rules = JsonUtils.Deserialize<List<RulesItem>>(SelectedRouting.ruleSet);
             }
 
             RefreshRulesItems();
@@ -81,9 +80,9 @@ namespace v2rayN.ViewModels
             {
                 ImportRulesFromClipboard();
             });
-            ImportRulesFromUrlCmd = ReactiveCommand.Create(() =>
+            ImportRulesFromUrlCmd = ReactiveCommand.CreateFromTask(() =>
             {
-                ImportRulesFromUrl();
+                return ImportRulesFromUrl();
             });
 
             RuleRemoveCmd = ReactiveCommand.Create(() =>
@@ -117,7 +116,7 @@ namespace v2rayN.ViewModels
                 SaveRouting();
             });
 
-            Utils.SetDarkBorder(view, _config.uiItem.colorModeDark);
+            Utils.SetDarkBorder(view, _config.uiItem.followSystemTheme ? !Utils.IsLightTheme() : _config.uiItem.colorModeDark);
         }
 
         public void RefreshRulesItems()
@@ -143,7 +142,7 @@ namespace v2rayN.ViewModels
 
         public void RuleEdit(bool blNew)
         {
-            RulesItem item;
+            RulesItem? item;
             if (blNew)
             {
                 item = new();
@@ -171,7 +170,7 @@ namespace v2rayN.ViewModels
         {
             if (SelectedSource is null || SelectedSource.outboundTag.IsNullOrEmpty())
             {
-                UI.Show(ResUI.PleaseSelectRules);
+                _noticeHandler?.Enqueue(ResUI.PleaseSelectRules);
                 return;
             }
             if (UI.ShowYesNo(ResUI.RemoveRules) == MessageBoxResult.No)
@@ -194,23 +193,24 @@ namespace v2rayN.ViewModels
         {
             if (SelectedSource is null || SelectedSource.outboundTag.IsNullOrEmpty())
             {
-                UI.Show(ResUI.PleaseSelectRules);
+                _noticeHandler?.Enqueue(ResUI.PleaseSelectRules);
                 return;
             }
 
-            var lst = new List<RulesItem>();
+            var lst = new List<RulesItem4Ray>();
             foreach (var it in SelectedSources)
             {
                 var item = _rules.FirstOrDefault(t => t.id == it?.id);
                 if (item != null)
                 {
-                    lst.Add(item);
+                    var item2 = JsonUtils.Deserialize<RulesItem4Ray>(JsonUtils.Serialize(item));
+                    lst.Add(item2 ?? new());
                 }
             }
             if (lst.Count > 0)
             {
-                Utils.SetClipboardData(Utils.ToJson(lst));
-                //UI.Show(ResUI.OperationSuccess"));
+                Utils.SetClipboardData(JsonUtils.Serialize(lst));
+                //_noticeHandler?.Enqueue(ResUI.OperationSuccess"));
             }
         }
 
@@ -218,7 +218,7 @@ namespace v2rayN.ViewModels
         {
             if (SelectedSource is null || SelectedSource.outboundTag.IsNullOrEmpty())
             {
-                UI.Show(ResUI.PleaseSelectRules);
+                _noticeHandler?.Enqueue(ResUI.PleaseSelectRules);
                 return;
             }
 
@@ -239,7 +239,7 @@ namespace v2rayN.ViewModels
             string remarks = SelectedRouting.remarks;
             if (Utils.IsNullOrEmpty(remarks))
             {
-                UI.Show(ResUI.PleaseFillRemarks);
+                _noticeHandler?.Enqueue(ResUI.PleaseFillRemarks);
                 return;
             }
             var item = SelectedRouting;
@@ -248,7 +248,7 @@ namespace v2rayN.ViewModels
                 it.id = Utils.GetGUID(false);
             }
             item.ruleNum = _rules.Count;
-            item.ruleSet = Utils.ToJson(_rules, false);
+            item.ruleSet = JsonUtils.Serialize(_rules, false);
 
             if (ConfigHandler.SaveRoutingItem(_config, item) == 0)
             {
@@ -257,7 +257,7 @@ namespace v2rayN.ViewModels
             }
             else
             {
-                UI.ShowWarning(ResUI.OperationFailed);
+                _noticeHandler?.Enqueue(ResUI.OperationFailed);
             }
         }
 
@@ -265,20 +265,16 @@ namespace v2rayN.ViewModels
 
         private void ImportRulesFromFile()
         {
-            OpenFileDialog fileDialog = new OpenFileDialog
-            {
-                Multiselect = false,
-                Filter = "Rules|*.json|All|*.*"
-            };
-            if (fileDialog.ShowDialog() != true)
+            if (UI.OpenFileDialog(out string fileName,
+                "Rules|*.json|All|*.*") != true)
             {
                 return;
             }
-            string fileName = fileDialog.FileName;
             if (Utils.IsNullOrEmpty(fileName))
             {
                 return;
             }
+
             string result = Utils.LoadResource(fileName);
             if (Utils.IsNullOrEmpty(result))
             {
@@ -288,17 +284,17 @@ namespace v2rayN.ViewModels
             if (AddBatchRoutingRules(SelectedRouting, result) == 0)
             {
                 RefreshRulesItems();
-                UI.Show(ResUI.OperationSuccess);
+                _noticeHandler?.Enqueue(ResUI.OperationSuccess);
             }
         }
 
         private void ImportRulesFromClipboard()
         {
-            string clipboardData = Utils.GetClipboardData();
+            var clipboardData = Utils.GetClipboardData();
             if (AddBatchRoutingRules(SelectedRouting, clipboardData) == 0)
             {
                 RefreshRulesItems();
-                UI.Show(ResUI.OperationSuccess);
+                _noticeHandler?.Enqueue(ResUI.OperationSuccess);
             }
         }
 
@@ -307,23 +303,23 @@ namespace v2rayN.ViewModels
             var url = SelectedRouting.url;
             if (Utils.IsNullOrEmpty(url))
             {
-                UI.Show(ResUI.MsgNeedUrl);
+                _noticeHandler?.Enqueue(ResUI.MsgNeedUrl);
                 return;
             }
 
             DownloadHandle downloadHandle = new DownloadHandle();
-            string result = await downloadHandle.TryDownloadString(url, true, "");
+            var result = await downloadHandle.TryDownloadString(url, true, "");
             if (AddBatchRoutingRules(SelectedRouting, result) == 0)
             {
                 Application.Current.Dispatcher.Invoke((Action)(() =>
                 {
                     RefreshRulesItems();
                 }));
-                UI.Show(ResUI.OperationSuccess);
+                _noticeHandler?.Enqueue(ResUI.OperationSuccess);
             }
         }
 
-        private int AddBatchRoutingRules(RoutingItem routingItem, string clipboardData)
+        private int AddBatchRoutingRules(RoutingItem routingItem, string? clipboardData)
         {
             bool blReplace = false;
             if (UI.ShowYesNo(ResUI.AddBatchRoutingRulesYesNo) == MessageBoxResult.No)
@@ -334,7 +330,7 @@ namespace v2rayN.ViewModels
             {
                 return -1;
             }
-            var lstRules = Utils.FromJson<List<RulesItem>>(clipboardData);
+            var lstRules = JsonUtils.Deserialize<List<RulesItem>>(clipboardData);
             if (lstRules == null)
             {
                 return -1;

@@ -1,5 +1,6 @@
 ﻿using PacLib;
-using v2rayN.Mode;
+using v2rayN.Enums;
+using v2rayN.Models;
 
 namespace v2rayN.Handler
 {
@@ -41,16 +42,16 @@ namespace v2rayN.Handler
 
             try
             {
-                int port = LazyConfig.Instance.GetLocalPort(Global.InboundHttp);
-                int portSocks = LazyConfig.Instance.GetLocalPort(Global.InboundSocks);
-                int portPac = LazyConfig.Instance.GetLocalPort(ESysProxyType.Pac.ToString());
+                int port = LazyConfig.Instance.GetLocalPort(EInboundProtocol.http);
+                int portSocks = LazyConfig.Instance.GetLocalPort(EInboundProtocol.socks);
+                int portPac = LazyConfig.Instance.GetLocalPort(EInboundProtocol.pac);
                 if (port <= 0)
                 {
                     return false;
                 }
                 if (type == ESysProxyType.ForcedChange)
                 {
-                    var strExceptions = $"{config.constItem.defIEProxyExceptions};{config.systemProxyExceptions}";
+                    var strExceptions = $"<local>;{config.constItem.defIEProxyExceptions};{config.systemProxyExceptions}";
 
                     var strProxy = string.Empty;
                     if (Utils.IsNullOrEmpty(config.systemProxyAdvancedProtocol))
@@ -87,7 +88,7 @@ namespace v2rayN.Handler
             }
             catch (Exception ex)
             {
-                Utils.SaveLog(ex.Message, ex);
+                Logging.SaveLog(ex.Message, ex);
             }
             return true;
         }

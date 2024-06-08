@@ -359,7 +359,7 @@
     <value>请填写正确的自定义DNS</value>
   </data>
   <data name="TransportPathTip1" xml:space="preserve">
-    <value>*ws path</value>
+    <value>*ws/httpupgrade path</value>
   </data>
   <data name="TransportPathTip2" xml:space="preserve">
     <value>*h2 path</value>
@@ -374,7 +374,7 @@
     <value>*http host中间逗号(,)分隔</value>
   </data>
   <data name="TransportRequestHostTip2" xml:space="preserve">
-    <value>*ws host</value>
+    <value>*ws/httpupgrade host</value>
   </data>
   <data name="TransportRequestHostTip3" xml:space="preserve">
     <value>*h2 host中间逗号(,)分隔</value>
@@ -531,9 +531,6 @@
   </data>
   <data name="menuClearServerStatistics" xml:space="preserve">
     <value>清除所有服务统计数据</value>
-  </data>
-  <data name="menuPingServer" xml:space="preserve">
-    <value>测试服务器延迟Ping(多选) (Ctrl+P)</value>
   </data>
   <data name="menuRealPingServer" xml:space="preserve">
     <value>测试服务器真连接延迟(多选) (Ctrl+R)</value>
@@ -704,7 +701,7 @@
     <value>Socks端口</value>
   </data>
   <data name="TipPreSocksPort" xml:space="preserve">
-    <value>* 自定义配置的Socks端口值，可不设置；当设置此值后，将使用sing-box额外启动一个前置Socks服务，提供分流和速度显示等功能</value>
+    <value>* 自定义配置的Socks端口值，可不设置；当设置此值后，将使用Xray/sing-box(Tun)额外启动一个前置Socks服务，提供分流和速度显示等功能</value>
   </data>
   <data name="TbBrowse" xml:space="preserve">
     <value>浏览</value>
@@ -1040,7 +1037,7 @@
     <value>拷贝字体TTF/TTC文件到目录guiFonts，重启设置</value>
   </data>
   <data name="TbSettingsSocksPortTip" xml:space="preserve">
-    <value>http端口=socks端口+1</value>
+    <value>http端口=socks端口+1；Pac端口=socks端口+4；API端口=socks端口+5；</value>
   </data>
   <data name="TbSettingsStartBootTip" xml:space="preserve">
     <value>以管理员权限设置此项，在启动后获得管理员权限</value>
@@ -1082,7 +1079,7 @@
     <value>启用硬件加速(需重启)</value>
   </data>
   <data name="SpeedtestingWait" xml:space="preserve">
-    <value>等待测试中......</value>
+    <value>等待测试中（按ESC终止）...</value>
   </data>
   <data name="TipDisplayLog" xml:space="preserve">
     <value>当有异常断流时请关闭</value>
@@ -1164,5 +1161,59 @@
   </data>
   <data name="TbSettingsEnableIPv6Address" xml:space="preserve">
     <value>启用IPv6</value>
+  </data>
+  <data name="menuAddWireguardServer" xml:space="preserve">
+    <value>添加[Wireguard]服务器</value>
+  </data>
+  <data name="TbPrivateKey" xml:space="preserve">
+    <value>PrivateKey</value>
+  </data>
+  <data name="TbReserved" xml:space="preserve">
+    <value>Reserved(2,3,4)</value>
+  </data>
+  <data name="TbLocalAddress" xml:space="preserve">
+    <value>Address(Ip,Ipv6)</value>
+  </data>
+  <data name="TbPath7" xml:space="preserve">
+    <value>混淆密码(obfs password)</value>
+  </data>
+  <data name="TbRuleMatchingTips" xml:space="preserve">
+    <value>(Domain 或 IP 或 进程名) 与 Port 与 Protocol 与 InboundTag =&gt; OutboundTag</value>
+  </data>
+  <data name="TbAutoScrollToEnd" xml:space="preserve">
+    <value>自动滚动到末尾</value>
+  </data>
+  <data name="TbSettingsSpeedPingTestUrl" xml:space="preserve">
+    <value>真连接测试地址</value>
+  </data>
+  <data name="TbSettingsEnableUpdateSubOnlyRemarksExist" xml:space="preserve">
+    <value>更新订阅时只判断别名已存在否</value>
+  </data>
+  <data name="SpeedtestingStop" xml:space="preserve">
+    <value>测试终止中...</value>
+  </data>
+  <data name="TransportRequestHostTip5" xml:space="preserve">
+    <value>*grpc Authority</value>
+  </data>
+  <data name="menuAddHttpServer" xml:space="preserve">
+    <value>添加[Http]服务器</value>
+  </data>
+  <data name="TbSettingsEnableFragment" xml:space="preserve">
+    <value>启用分片（Fragment）</value>
+  </data>
+  <data name="TbSettingsEnableFragmentTips" xml:space="preserve">
+    <value>使用Xray且非Tun模式启用，和分组前置代理冲突</value>
+  </data>
+  <data name="TbSettingsEnableCacheFile4Sbox" xml:space="preserve">
+    <value>启用sing-box（规则集文件）的缓存文件</value>
+  </data>
+  <data name="LvCustomRulesetPath4Singbox" xml:space="preserve">
+    <value>自定义sing-box rule-set</value>
+  </data>
+  <data name="NeedRebootTips" xml:space="preserve">
+    <value>操作成功。请点击设置菜单重启应用。</value>
+  </data>
+  <data name="menuOpenTheFileLocation" xml:space="preserve">
+    <value>打开存储所在的位置</value>
   </data>
 </root>

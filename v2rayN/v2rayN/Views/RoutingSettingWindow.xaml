@@ -90,6 +90,7 @@
                     Style="{StaticResource ToolbarTextBlock}">
                     <Hyperlink Click="linkdomainStrategy_Click">
                         <TextBlock Text="{x:Static resx:ResUI.TbdomainStrategy}" />
+                        <materialDesign:PackIcon Kind="Link" />
                     </Hyperlink>
                 </TextBlock>
                 <ComboBox
@@ -115,6 +116,7 @@
                     Style="{StaticResource ToolbarTextBlock}">
                     <Hyperlink Click="linkdomainStrategy4Singbox_Click">
                         <TextBlock Text="{x:Static resx:ResUI.TbdomainStrategy4Singbox}" />
+                        <materialDesign:PackIcon Kind="Link" />
                     </Hyperlink>
                 </TextBlock>
                 <ComboBox
@@ -125,38 +127,33 @@
             </ToolBar>
         </ToolBarTray>
 
-        <Grid
+        <StackPanel
             Margin="8"
-            HorizontalAlignment="Center"
-            DockPanel.Dock="Bottom">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="600" />
-                <ColumnDefinition Width="100" />
-                <ColumnDefinition Width="100" />
-            </Grid.ColumnDefinitions>
+            HorizontalAlignment="Right"
+            DockPanel.Dock="Bottom"
+            Orientation="Horizontal">
             <StackPanel
-                Grid.Column="0"
+                Width="600"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Center">
                 <TextBlock Style="{StaticResource ToolbarTextBlock}" Text="{x:Static resx:ResUI.TbRoutingTips}" />
             </StackPanel>
             <Button
                 x:Name="btnSave"
-                Grid.Column="1"
-                Margin="4"
+                Width="100"
                 Content="{x:Static resx:ResUI.TbConfirm}"
                 Cursor="Hand"
                 Style="{StaticResource DefButton}" />
             <Button
                 x:Name="btnCancel"
-                Grid.Column="2"
-                Margin="4"
+                Width="100"
+                Margin="8,0"
                 Click="btnCancel_Click"
                 Content="{x:Static resx:ResUI.TbCancel}"
                 Cursor="Hand"
                 IsCancel="true"
                 Style="{StaticResource DefButton}" />
-        </Grid>
+        </StackPanel>
 
         <DockPanel>
             <TabControl x:Name="tabAdvanced">
@@ -204,9 +201,9 @@
                             <Style BasedOn="{StaticResource MaterialDesignDataGridCell}" TargetType="DataGridCell">
                                 <Style.Triggers>
                                     <DataTrigger Binding="{Binding isActive}" Value="True">
-                                        <Setter Property="Background" Value="{DynamicResource PrimaryHueLightBrush}" />
+                                        <Setter Property="Background" Value="{DynamicResource MaterialDesign.Brush.Primary.Light}" />
                                         <Setter Property="Foreground" Value="Black" />
-                                        <Setter Property="BorderBrush" Value="{DynamicResource PrimaryHueLightBrush}" />
+                                        <Setter Property="BorderBrush" Value="{DynamicResource MaterialDesign.Brush.Primary.Light}" />
                                     </DataTrigger>
                                 </Style.Triggers>
                             </Style>

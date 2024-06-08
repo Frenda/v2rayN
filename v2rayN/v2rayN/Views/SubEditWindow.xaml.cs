@@ -1,7 +1,7 @@
 ﻿using ReactiveUI;
 using System.Reactive.Disposables;
 using System.Windows;
-using v2rayN.Mode;
+using v2rayN.Models;
 using v2rayN.ViewModels;
 
 namespace v2rayN.Views
@@ -53,11 +53,6 @@ namespace v2rayN.Views
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             txtRemarks.Focus();
-        }
-
-        private void btnCancel_Click(object sender, RoutedEventArgs e)
-        {
-            this.Close();
         }
     }
 }

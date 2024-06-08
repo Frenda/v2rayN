@@ -2,8 +2,9 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using v2rayN.Enums;
 using v2rayN.Handler;
-using v2rayN.Mode;
+using v2rayN.Models;
 using v2rayN.Resx;
 
 namespace v2rayN.Views
@@ -39,7 +40,7 @@ namespace v2rayN.Views
 
             HotkeyHandler.Instance.IsPause = true;
             this.Closing += (s, e) => HotkeyHandler.Instance.IsPause = false;
-            Utils.SetDarkBorder(this, _config.uiItem.colorModeDark);
+            Utils.SetDarkBorder(this, _config.uiItem.followSystemTheme ? !Utils.IsLightTheme() : _config.uiItem.colorModeDark);
             InitData();
         }
 
@@ -68,9 +69,9 @@ namespace v2rayN.Views
             (sender as TextBox)!.Text = KeyEventItemToString(_TextBoxKeyEventItem[sender]);
         }
 
-        private KeyEventItem GetKeyEventItemByEGlobalHotkey(List<KeyEventItem> KELsit, EGlobalHotkey eg)
+        private KeyEventItem GetKeyEventItemByEGlobalHotkey(List<KeyEventItem> KEList, EGlobalHotkey eg)
         {
-            return Utils.DeepCopy(KELsit.Find((it) => it.eGlobalHotkey == eg) ?? new()
+            return JsonUtils.DeepCopy(KEList.Find((it) => it.eGlobalHotkey == eg) ?? new()
             {
                 eGlobalHotkey = eg,
                 Control = false,
@@ -119,13 +120,8 @@ namespace v2rayN.Views
             }
             else
             {
-                UI.ShowWarning(ResUI.OperationFailed);
+                UI.Show(ResUI.OperationFailed);
             }
-        }
-
-        private void btnCancel_Click(object sender, RoutedEventArgs e)
-        {
-            this.Close();
         }
 
         private void btnReset_Click(object sender, RoutedEventArgs e)

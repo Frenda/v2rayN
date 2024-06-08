@@ -2,7 +2,7 @@
 using System.Reactive.Disposables;
 using System.Windows;
 using System.Windows.Input;
-using v2rayN.Mode;
+using v2rayN.Models;
 using v2rayN.ViewModels;
 
 namespace v2rayN.Views
@@ -31,7 +31,7 @@ namespace v2rayN.Views
 
             ViewModel = new RoutingSettingViewModel(this);
 
-            Global.DomainStrategys.ForEach(it =>
+            Global.DomainStrategies.ForEach(it =>
             {
                 cmbdomainStrategy.Items.Add(it);
             });
@@ -39,7 +39,7 @@ namespace v2rayN.Views
             {
                 cmbdomainMatcher.Items.Add(it);
             });
-            Global.DomainStrategys4Singbox.ForEach(it =>
+            Global.DomainStrategies4Singbox.ForEach(it =>
             {
                 cmbdomainStrategy4Singbox.Items.Add(it);
             });
@@ -127,7 +127,7 @@ namespace v2rayN.Views
 
         private void linkdomainStrategy_Click(object sender, System.Windows.RoutedEventArgs e)
         {
-            Utils.ProcessStart("https://www.v2fly.org/config/routing.html");
+            Utils.ProcessStart("https://xtls.github.io/config/routing.html");
         }
 
         private void linkdomainStrategy4Singbox_Click(object sender, RoutedEventArgs e)

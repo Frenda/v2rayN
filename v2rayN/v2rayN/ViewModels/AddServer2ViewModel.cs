@@ -1,4 +1,3 @@
-using Microsoft.Win32;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using ReactiveUI.Validation.Helpers;
@@ -6,9 +5,8 @@ using Splat;
 using System.IO;
 using System.Reactive;
 using System.Windows;
-using v2rayN.Base;
 using v2rayN.Handler;
-using v2rayN.Mode;
+using v2rayN.Models;
 using v2rayN.Resx;
 
 namespace v2rayN.ViewModels
@@ -38,7 +36,7 @@ namespace v2rayN.ViewModels
             }
             else
             {
-                SelectedSource = Utils.DeepCopy(profileItem);
+                SelectedSource = JsonUtils.DeepCopy(profileItem);
             }
 
             _view = view;
@@ -58,7 +56,7 @@ namespace v2rayN.ViewModels
                 SaveServer();
             });
 
-            Utils.SetDarkBorder(view, _config.uiItem.colorModeDark);
+            Utils.SetDarkBorder(view, _config.uiItem.followSystemTheme ? !Utils.IsLightTheme() : _config.uiItem.colorModeDark);
         }
 
         private void SaveServer()
@@ -66,13 +64,13 @@ namespace v2rayN.ViewModels
             string remarks = SelectedSource.remarks;
             if (Utils.IsNullOrEmpty(remarks))
             {
-                UI.Show(ResUI.PleaseFillRemarks);
+                _noticeHandler?.Enqueue(ResUI.PleaseFillRemarks);
                 return;
             }
 
             if (Utils.IsNullOrEmpty(SelectedSource.address))
             {
-                UI.Show(ResUI.FillServerAddressCustom);
+                _noticeHandler?.Enqueue(ResUI.FillServerAddressCustom);
                 return;
             }
 
@@ -97,28 +95,24 @@ namespace v2rayN.ViewModels
             }
             else
             {
-                UI.Show(ResUI.OperationFailed);
+                _noticeHandler?.Enqueue(ResUI.OperationFailed);
             }
         }
 
         private void BrowseServer()
         {
-            UI.Show(ResUI.CustomServerTips);
+            //_noticeHandler?.Enqueue(ResUI.CustomServerTips);
 
-            OpenFileDialog fileDialog = new()
-            {
-                Multiselect = false,
-                Filter = "Config|*.json|YAML|*.yaml;*.yml|All|*.*"
-            };
-            if (fileDialog.ShowDialog() != true)
+            if (UI.OpenFileDialog(out string fileName,
+                "Config|*.json|YAML|*.yaml;*.yml|All|*.*") != true)
             {
                 return;
             }
-            string fileName = fileDialog.FileName;
             if (Utils.IsNullOrEmpty(fileName))
             {
                 return;
             }
+
             var item = LazyConfig.Instance.GetProfileItem(SelectedSource.indexId);
             item ??= SelectedSource;
             item.address = fileName;
@@ -127,13 +121,13 @@ namespace v2rayN.ViewModels
                 _noticeHandler?.Enqueue(ResUI.SuccessfullyImportedCustomServer);
                 if (!Utils.IsNullOrEmpty(item.indexId))
                 {
-                    SelectedSource = Utils.DeepCopy(item);
+                    SelectedSource = JsonUtils.DeepCopy(item);
                 }
                 IsModified = true;
             }
             else
             {
-                UI.ShowWarning(ResUI.FailedImportedCustomServer);
+                _noticeHandler?.Enqueue(ResUI.FailedImportedCustomServer);
             }
         }
 
@@ -142,7 +136,7 @@ namespace v2rayN.ViewModels
             var address = SelectedSource.address;
             if (Utils.IsNullOrEmpty(address))
             {
-                UI.Show(ResUI.FillServerAddressCustom);
+                _noticeHandler?.Enqueue(ResUI.FillServerAddressCustom);
                 return;
             }
 

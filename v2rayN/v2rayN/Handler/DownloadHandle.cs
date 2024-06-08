@@ -4,7 +4,7 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.Sockets;
-using v2rayN.Base;
+using v2rayN.Enums;
 using v2rayN.Resx;
 
 namespace v2rayN.Handler
@@ -84,7 +84,7 @@ namespace v2rayN.Handler
             }
             catch (Exception ex)
             {
-                Utils.SaveLog(ex.Message, ex);
+                Logging.SaveLog(ex.Message, ex);
 
                 Error?.Invoke(this, new ErrorEventArgs(ex));
                 if (ex.InnerException != null)
@@ -111,7 +111,7 @@ namespace v2rayN.Handler
             }
             else
             {
-                Utils.SaveLog("StatusCode error: " + url);
+                Logging.SaveLog("StatusCode error: " + url);
                 return null;
             }
         }
@@ -128,7 +128,7 @@ namespace v2rayN.Handler
             }
             catch (Exception ex)
             {
-                Utils.SaveLog(ex.Message, ex);
+                Logging.SaveLog(ex.Message, ex);
                 Error?.Invoke(this, new ErrorEventArgs(ex));
                 if (ex.InnerException != null)
                 {
@@ -146,7 +146,7 @@ namespace v2rayN.Handler
             }
             catch (Exception ex)
             {
-                Utils.SaveLog(ex.Message, ex);
+                Logging.SaveLog(ex.Message, ex);
                 Error?.Invoke(this, new ErrorEventArgs(ex));
                 if (ex.InnerException != null)
                 {
@@ -166,7 +166,7 @@ namespace v2rayN.Handler
             }
             catch (Exception ex)
             {
-                Utils.SaveLog(ex.Message, ex);
+                Logging.SaveLog(ex.Message, ex);
                 Error?.Invoke(this, new ErrorEventArgs(ex));
                 if (ex.InnerException != null)
                 {
@@ -212,7 +212,7 @@ namespace v2rayN.Handler
             }
             catch (Exception ex)
             {
-                Utils.SaveLog(ex.Message, ex);
+                Logging.SaveLog(ex.Message, ex);
                 Error?.Invoke(this, new ErrorEventArgs(ex));
                 if (ex.InnerException != null)
                 {
@@ -243,7 +243,7 @@ namespace v2rayN.Handler
             }
             catch (Exception ex)
             {
-                Utils.SaveLog(ex.Message, ex);
+                Logging.SaveLog(ex.Message, ex);
                 Error?.Invoke(this, new ErrorEventArgs(ex));
                 if (ex.InnerException != null)
                 {
@@ -270,13 +270,13 @@ namespace v2rayN.Handler
                 }
                 catch (Exception ex)
                 {
-                    Utils.SaveLog(ex.Message, ex);
+                    Logging.SaveLog(ex.Message, ex);
                     return -1;
                 }
             }
             catch (Exception ex)
             {
-                Utils.SaveLog(ex.Message, ex);
+                Logging.SaveLog(ex.Message, ex);
                 return -1;
             }
         }
@@ -299,9 +299,9 @@ namespace v2rayN.Handler
 
                 responseTime = timer.Elapsed.Milliseconds;
             }
-            catch (Exception ex)
+            catch //(Exception ex)
             {
-                //Utils.SaveLog(ex.Message, ex);
+                //Utile.SaveLog(ex.Message, ex);
             }
             return responseTime;
         }
@@ -312,7 +312,7 @@ namespace v2rayN.Handler
             {
                 return null;
             }
-            var httpPort = LazyConfig.Instance.GetLocalPort(Global.InboundHttp);
+            var httpPort = LazyConfig.Instance.GetLocalPort(EInboundProtocol.http);
             if (!SocketCheck(Global.Loopback, httpPort))
             {
                 return null;

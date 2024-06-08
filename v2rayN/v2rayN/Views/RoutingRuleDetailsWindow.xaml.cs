@@ -1,8 +1,7 @@
 ﻿using ReactiveUI;
 using System.Reactive.Disposables;
 using System.Windows;
-using v2rayN.Base;
-using v2rayN.Mode;
+using v2rayN.Models;
 using v2rayN.ViewModels;
 
 namespace v2rayN.Views
@@ -82,14 +81,9 @@ namespace v2rayN.Views
             ViewModel.InboundTagItems = clbInboundTag.SelectedItems.Cast<string>().ToList();
         }
 
-        private void btnCancel_Click(object sender, RoutedEventArgs e)
-        {
-            this.Close();
-        }
-
         private void linkRuleobjectDoc_Click(object sender, RoutedEventArgs e)
         {
-            Utils.ProcessStart("https://www.v2fly.org/config/routing.html#ruleobject");
+            Utils.ProcessStart("https://xtls.github.io/config/routing.html#ruleobject");
         }
     }
 }

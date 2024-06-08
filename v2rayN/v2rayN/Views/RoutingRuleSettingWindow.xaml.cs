@@ -1,9 +1,9 @@
-﻿using Microsoft.Win32;
-using ReactiveUI;
+﻿using ReactiveUI;
 using System.Reactive.Disposables;
 using System.Windows;
 using System.Windows.Input;
-using v2rayN.Mode;
+using v2rayN.Enums;
+using v2rayN.Models;
 using v2rayN.ViewModels;
 
 namespace v2rayN.Views
@@ -31,12 +31,12 @@ namespace v2rayN.Views
             lstRules.MouseDoubleClick += LstRules_MouseDoubleClick;
 
             ViewModel = new RoutingRuleSettingViewModel(routingItem, this);
-            Global.DomainStrategys.ForEach(it =>
+            Global.DomainStrategies.ForEach(it =>
             {
                 cmbdomainStrategy.Items.Add(it);
             });
             cmbdomainStrategy.Items.Add(string.Empty);
-            Global.DomainStrategys4Singbox.ForEach(it =>
+            Global.DomainStrategies4Singbox.ForEach(it =>
             {
                 cmbdomainStrategy4Singbox.Items.Add(it);
             });
@@ -52,6 +52,7 @@ namespace v2rayN.Views
 
                 this.Bind(ViewModel, vm => vm.SelectedRouting.url, v => v.txtUrl.Text).DisposeWith(disposables);
                 this.Bind(ViewModel, vm => vm.SelectedRouting.customIcon, v => v.txtCustomIcon.Text).DisposeWith(disposables);
+                this.Bind(ViewModel, vm => vm.SelectedRouting.customRulesetPath4Singbox, v => v.txtCustomRulesetPath4Singbox.Text).DisposeWith(disposables);
                 this.Bind(ViewModel, vm => vm.SelectedRouting.sort, v => v.txtSort.Text).DisposeWith(disposables);
 
                 this.BindCommand(ViewModel, vm => vm.RuleAddCmd, v => v.menuRuleAdd).DisposeWith(disposables);
@@ -129,13 +130,31 @@ namespace v2rayN.Views
             lstRules.SelectAll();
         }
 
-        private void btnBrowse_Click(object sender, System.Windows.RoutedEventArgs e)
+        private void btnBrowseCustomIcon_Click(object sender, System.Windows.RoutedEventArgs e)
         {
-            var openFileDialog1 = new OpenFileDialog();
-            openFileDialog1.Filter = "PNG|*.png";
-            openFileDialog1.ShowDialog();
+            if (UI.OpenFileDialog(out string fileName,
+                "PNG,ICO|*.png;*.ico") != true)
+            {
+                return;
+            }
 
-            txtCustomIcon.Text = openFileDialog1.FileName;
+            txtCustomIcon.Text = fileName;
+        }
+
+        private void btnBrowseCustomRulesetPath4Singbox_Click(object sender, RoutedEventArgs e)
+        {
+            if (UI.OpenFileDialog(out string fileName,
+                  "Config|*.json|All|*.*") != true)
+            {
+                return;
+            }
+
+            txtCustomRulesetPath4Singbox.Text = fileName;
+        }
+
+        private void linkCustomRulesetPath4Singbox(object sender, RoutedEventArgs e)
+        {
+            Utils.ProcessStart("https://github.com/2dust/v2rayCustomRoutingList/blob/master/singbox_custom_ruleset_example.json");
         }
     }
 }

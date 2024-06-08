@@ -1,19 +1,20 @@
 ﻿using Grpc.Core;
 using Grpc.Net.Client;
 using ProtosLib.Statistics;
-using v2rayN.Mode;
+using v2rayN.Enums;
+using v2rayN.Models;
 
 namespace v2rayN.Handler
 {
     internal class StatisticsV2ray
     {
-        private Mode.Config _config;
-        private GrpcChannel _channel;
-        private StatsService.StatsServiceClient _client;
+        private Models.Config _config;
+        private GrpcChannel? _channel;
+        private StatsService.StatsServiceClient? _client;
         private bool _exitFlag;
         private Action<ServerSpeedItem> _updateFunc;
 
-        public StatisticsV2ray(Mode.Config config, Action<ServerSpeedItem> update)
+        public StatisticsV2ray(Models.Config config, Action<ServerSpeedItem> update)
         {
             _config = config;
             _updateFunc = update;
@@ -26,10 +27,17 @@ namespace v2rayN.Handler
 
         private void GrpcInit()
         {
-            if (_channel == null)
+            if (_channel is null)
             {
-                _channel = GrpcChannel.ForAddress($"{Global.HttpProtocol}{Global.Loopback}:{Global.StatePort}");
-                _client = new StatsService.StatsServiceClient(_channel);
+                try
+                {
+                    _channel = GrpcChannel.ForAddress($"{Global.HttpProtocol}{Global.Loopback}:{LazyConfig.Instance.StatePort}");
+                    _client = new StatsService.StatsServiceClient(_channel);
+                }
+                catch (Exception ex)
+                {
+                    Logging.SaveLog(ex.Message, ex);
+                }
             }
         }
 
@@ -42,14 +50,20 @@ namespace v2rayN.Handler
         {
             while (!_exitFlag)
             {
+                await Task.Delay(1000);
                 try
                 {
-                    if (_channel.State == ConnectivityState.Ready)
+                    if (!(_config.runningCoreType is ECoreType.Xray or ECoreType.v2fly or ECoreType.v2fly_v5 or ECoreType.SagerNet))
+                    {
+                        continue;
+                    }
+                    if (_channel?.State == ConnectivityState.Ready)
                     {
                         QueryStatsResponse? res = null;
                         try
                         {
-                            res = await _client.QueryStatsAsync(new QueryStatsRequest() { Pattern = "", Reset = true });
+                            if (_client != null)
+                                res = await _client.QueryStatsAsync(new QueryStatsRequest() { Pattern = "", Reset = true });
                         }
                         catch
                         {
@@ -61,8 +75,8 @@ namespace v2rayN.Handler
                             _updateFunc(server);
                         }
                     }
-                    await Task.Delay(1000);
-                    await _channel.ConnectAsync();
+                    if (_channel != null)
+                        await _channel.ConnectAsync();
                 }
                 catch
                 {

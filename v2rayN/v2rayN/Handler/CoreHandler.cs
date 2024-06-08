@@ -2,7 +2,9 @@
 using System.IO;
 using System.Reactive.Linq;
 using System.Text;
-using v2rayN.Mode;
+using v2rayN.Enums;
+using v2rayN.Handler.CoreConfig;
+using v2rayN.Models;
 using v2rayN.Resx;
 
 namespace v2rayN.Handler
@@ -39,12 +41,19 @@ namespace v2rayN.Handler
             if (CoreConfigHandler.GenerateClientConfig(node, fileName, out string msg, out string content) != 0)
             {
                 ShowMsg(false, msg);
+                return;
             }
             else
             {
                 ShowMsg(false, msg);
                 ShowMsg(true, $"{node.GetSummary()}");
                 CoreStop();
+                if (_config.tunModeItem.enableTun)
+                {
+                    Thread.Sleep(1000);
+                    Utils.RemoveTunDevice();
+                }
+
                 CoreStart(node);
 
                 //In tun mode, do a delay check and restart the core
@@ -59,7 +68,7 @@ namespace v2rayN.Handler
                             {
                                 CoreStart(node);
                                 ShowMsg(false, "Tun mode restart the core once");
-                                Utils.SaveLog("Tun mode restart the core once");
+                                Logging.SaveLog("Tun mode restart the core once");
                             }
                         }
                     });
@@ -70,7 +79,7 @@ namespace v2rayN.Handler
         public int LoadCoreConfigSpeedtest(List<ServerTestItem> selecteds)
         {
             int pid = -1;
-            var coreType = selecteds.Exists(t => t.configType == EConfigType.Hysteria2 || t.configType == EConfigType.Tuic) ? ECoreType.sing_box : ECoreType.Xray;
+            var coreType = selecteds.Exists(t => t.configType == EConfigType.Hysteria2 || t.configType == EConfigType.Tuic || t.configType == EConfigType.Wireguard) ? ECoreType.sing_box : ECoreType.Xray;
             string configPath = Utils.GetConfigPath(Global.CoreSpeedtestConfigFileName);
             if (CoreConfigHandler.GenerateClientSpeedtestConfig(_config, configPath, selecteds, coreType, out string msg) != 0)
             {
@@ -107,8 +116,8 @@ namespace v2rayN.Handler
 
                 if (!hasProc)
                 {
-                    var coreInfos = LazyConfig.Instance.GetCoreInfos();
-                    foreach (var it in coreInfos)
+                    var coreInfo = LazyConfig.Instance.GetCoreInfo();
+                    foreach (var it in coreInfo)
                     {
                         if (it.coreType == ECoreType.v2rayN)
                         {
@@ -120,7 +129,7 @@ namespace v2rayN.Handler
                             foreach (Process p in existing)
                             {
                                 string? path = p.MainModule?.FileName;
-                                if (path == $"{Utils.GetBinPath(vName, it.coreType)}.exe")
+                                if (path == $"{Utils.GetBinPath(vName, it.coreType.ToString())}.exe")
                                 {
                                     KillProcess(p);
                                 }
@@ -131,7 +140,7 @@ namespace v2rayN.Handler
             }
             catch (Exception ex)
             {
-                Utils.SaveLog(ex.Message, ex);
+                Logging.SaveLog(ex.Message, ex);
             }
         }
 
@@ -144,17 +153,19 @@ namespace v2rayN.Handler
             }
             catch (Exception ex)
             {
-                Utils.SaveLog(ex.Message, ex);
+                Logging.SaveLog(ex.Message, ex);
             }
         }
 
-        private string CoreFindexe(CoreInfo coreInfo)
+        #region Private
+
+        private string CoreFindExe(CoreInfo coreInfo)
         {
             string fileName = string.Empty;
             foreach (string name in coreInfo.coreExes)
             {
                 string vName = $"{name}.exe";
-                vName = Utils.GetBinPath(vName, coreInfo.coreType);
+                vName = Utils.GetBinPath(vName, coreInfo.coreType.ToString());
                 if (File.Exists(vName))
                 {
                     fileName = vName;
@@ -163,8 +174,8 @@ namespace v2rayN.Handler
             }
             if (Utils.IsNullOrEmpty(fileName))
             {
-                string msg = string.Format(ResUI.NotFoundCore, Utils.GetBinPath("", coreInfo.coreType), string.Join(", ", coreInfo.coreExes.ToArray()), coreInfo.coreUrl);
-                Utils.SaveLog(msg);
+                string msg = string.Format(ResUI.NotFoundCore, Utils.GetBinPath("", coreInfo.coreType.ToString()), string.Join(", ", coreInfo.coreExes.ToArray()), coreInfo.coreUrl);
+                Logging.SaveLog(msg);
                 ShowMsg(false, msg);
             }
             return fileName;
@@ -172,6 +183,7 @@ namespace v2rayN.Handler
 
         private void CoreStart(ProfileItem node)
         {
+            ShowMsg(false, $"{Environment.OSVersion} - {(Environment.Is64BitOperatingSystem ? 64 : 32)}");
             ShowMsg(false, string.Format(ResUI.StartService, DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss")));
 
             ECoreType coreType;
@@ -183,10 +195,11 @@ namespace v2rayN.Handler
             {
                 coreType = LazyConfig.Instance.GetCoreType(node, node.configType);
             }
+            _config.runningCoreType = coreType;
             var coreInfo = LazyConfig.Instance.GetCoreInfo(coreType);
 
             var displayLog = node.configType != EConfigType.Custom || node.displayLog;
-            var proc = RunProcess(node, coreInfo, "", displayLog, ShowMsg);
+            var proc = RunProcess(node, coreInfo, "", displayLog);
             if (proc is null)
             {
                 return;
@@ -198,18 +211,20 @@ namespace v2rayN.Handler
             {
                 if ((node.configType == EConfigType.Custom && node.preSocksPort > 0))
                 {
+                    var preCoreType = _config.tunModeItem.enableTun ? ECoreType.sing_box : ECoreType.Xray;
                     var itemSocks = new ProfileItem()
                     {
-                        coreType = ECoreType.sing_box,
+                        coreType = preCoreType,
                         configType = EConfigType.Socks,
                         address = Global.Loopback,
                         port = node.preSocksPort
                     };
+                    _config.runningCoreType = preCoreType;
                     string fileName2 = Utils.GetConfigPath(Global.CorePreConfigFileName);
                     if (CoreConfigHandler.GenerateClientConfig(itemSocks, fileName2, out string msg2, out string configStr) == 0)
                     {
-                        var coreInfo2 = LazyConfig.Instance.GetCoreInfo(ECoreType.sing_box);
-                        var proc2 = RunProcess(node, coreInfo2, $" -c {Global.CorePreConfigFileName}", true, ShowMsg);
+                        var coreInfo2 = LazyConfig.Instance.GetCoreInfo(preCoreType);
+                        var proc2 = RunProcess(node, coreInfo2, $" -c {Global.CorePreConfigFileName}", true);
                         if (proc2 is not null)
                         {
                             _processPre = proc2;
@@ -227,7 +242,7 @@ namespace v2rayN.Handler
             try
             {
                 var coreInfo = LazyConfig.Instance.GetCoreInfo(coreType);
-                var proc = RunProcess(new(), coreInfo, $" -c {Global.CoreSpeedtestConfigFileName}", true, ShowMsg);
+                var proc = RunProcess(new(), coreInfo, $" -c {Global.CoreSpeedtestConfigFileName}", true);
                 if (proc is null)
                 {
                     return -1;
@@ -237,25 +252,27 @@ namespace v2rayN.Handler
             }
             catch (Exception ex)
             {
-                Utils.SaveLog(ex.Message, ex);
+                Logging.SaveLog(ex.Message, ex);
                 string msg = ex.Message;
                 ShowMsg(false, msg);
                 return -1;
             }
         }
 
-        private void ShowMsg(bool updateToTrayTooltip, string msg)
+        private void ShowMsg(bool notify, string msg)
         {
-            _updateFunc(updateToTrayTooltip, msg);
+            _updateFunc(notify, msg);
         }
+
+        #endregion Private
 
         #region Process
 
-        private Process? RunProcess(ProfileItem node, CoreInfo coreInfo, string configPath, bool displayLog, Action<bool, string> update)
+        private Process? RunProcess(ProfileItem node, CoreInfo coreInfo, string configPath, bool displayLog)
         {
             try
             {
-                string fileName = CoreFindexe(coreInfo);
+                string fileName = CoreFindExe(coreInfo);
                 if (Utils.IsNullOrEmpty(fileName))
                 {
                     return null;
@@ -275,22 +292,29 @@ namespace v2rayN.Handler
                         StandardErrorEncoding = displayLog ? Encoding.UTF8 : null,
                     }
                 };
+                var startUpErrorMessage = new StringBuilder();
+                var startUpSuccessful = false;
                 if (displayLog)
                 {
                     proc.OutputDataReceived += (sender, e) =>
                     {
-                        if (!string.IsNullOrEmpty(e.Data))
+                        if (!Utils.IsNullOrEmpty(e.Data))
                         {
                             string msg = e.Data + Environment.NewLine;
-                            update(false, msg);
+                            ShowMsg(false, msg);
                         }
                     };
                     proc.ErrorDataReceived += (sender, e) =>
                     {
-                        if (!string.IsNullOrEmpty(e.Data))
+                        if (!Utils.IsNullOrEmpty(e.Data))
                         {
                             string msg = e.Data + Environment.NewLine;
-                            update(false, msg);
+                            ShowMsg(false, msg);
+
+                            if (!startUpSuccessful)
+                            {
+                                startUpErrorMessage.Append(msg);
+                            }
                         }
                     };
                 }
@@ -303,17 +327,22 @@ namespace v2rayN.Handler
 
                 if (proc.WaitForExit(1000))
                 {
-                    throw new Exception(displayLog ? proc.StandardError.ReadToEnd() : "启动进程失败并退出 (Failed to start the process and exited)");
+                    proc.CancelErrorRead();
+                    throw new Exception(displayLog ? startUpErrorMessage.ToString() : "启动进程失败并退出 (Failed to start the process and exited)");
+                }
+                else
+                {
+                    startUpSuccessful = true;
                 }
 
-                Global.ProcessJob.AddProcess(proc.Handle);
+                LazyConfig.Instance.AddProcess(proc.Handle);
                 return proc;
             }
             catch (Exception ex)
             {
-                Utils.SaveLog(ex.Message, ex);
+                Logging.SaveLog(ex.Message, ex);
                 string msg = ex.Message;
-                update(true, msg);
+                ShowMsg(true, msg);
                 return null;
             }
         }
@@ -326,7 +355,7 @@ namespace v2rayN.Handler
             }
             try
             {
-                proc.CloseMainWindow();
+                proc.Kill();
                 proc.WaitForExit(100);
                 if (!proc.HasExited)
                 {
@@ -336,7 +365,7 @@ namespace v2rayN.Handler
             }
             catch (Exception ex)
             {
-                Utils.SaveLog(ex.Message, ex);
+                Logging.SaveLog(ex.Message, ex);
             }
         }
 

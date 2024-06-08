@@ -529,9 +529,6 @@
   <data name="menuClearServerStatistics" xml:space="preserve">
     <value>تمام آمار خدمات را پاک کنید</value>
   </data>
-  <data name="menuPingServer" xml:space="preserve">
-    <value>تست پینگ سرورها (Ctrl+P)</value>
-  </data>
   <data name="menuRealPingServer" xml:space="preserve">
     <value>آزمایش سرورها با تاخیر واقعی (Ctrl+R)</value>
   </data>
@@ -701,7 +698,7 @@
     <value>txtPreSocksPort</value>
   </data>
   <data name="TipPreSocksPort" xml:space="preserve">
-    <value>* After setting this value, an socks service will be started using sing-box to provide functions such as speed display</value>
+    <value>* After setting this value, an socks service will be started using Xray/sing-box(Tun) to provide functions such as speed display</value>
   </data>
   <data name="TbBrowse" xml:space="preserve">
     <value>Browse</value>
@@ -1005,5 +1002,8 @@
   </data>
   <data name="TbSettingsEnableHWA" xml:space="preserve">
     <value>فعال‌سازی شتاب‌دهنده سخت‌افزاری (نیاز به راه‌اندازی مجدد)</value>
+  </data>
+  <data name="TbSettingsEnableCacheFile4Sbox" xml:space="preserve">
+    <value>فعال کردن کش فایل مجموعه قوانین برای sing-box</value>
   </data>
 </root>

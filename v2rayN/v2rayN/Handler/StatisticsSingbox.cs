@@ -1,6 +1,7 @@
 ﻿using System.Net.WebSockets;
 using System.Text;
-using v2rayN.Mode;
+using v2rayN.Enums;
+using v2rayN.Models;
 
 namespace v2rayN.Handler
 {
@@ -27,7 +28,7 @@ namespace v2rayN.Handler
 
             try
             {
-                url = $"ws://{Global.Loopback}:{Global.StatePort}/traffic";
+                url = $"ws://{Global.Loopback}:{LazyConfig.Instance.StatePort}/traffic";
 
                 if (webSocket == null)
                 {
@@ -51,7 +52,7 @@ namespace v2rayN.Handler
             }
             catch (Exception ex)
             {
-                Utils.SaveLog(ex.Message, ex);
+                Logging.SaveLog(ex.Message, ex);
             }
         }
 
@@ -61,8 +62,13 @@ namespace v2rayN.Handler
 
             while (!_exitFlag)
             {
+                await Task.Delay(1000);
                 try
                 {
+                    if (!(_config.runningCoreType is ECoreType.sing_box or ECoreType.clash or ECoreType.clash_meta or ECoreType.mihomo))
+                    {
+                        continue;
+                    }
                     if (webSocket != null)
                     {
                         if (webSocket.State == WebSocketState.Aborted
@@ -84,7 +90,7 @@ namespace v2rayN.Handler
                         while (!res.CloseStatus.HasValue)
                         {
                             var result = Encoding.UTF8.GetString(buffer, 0, res.Count);
-                            if (!string.IsNullOrEmpty(result))
+                            if (!Utils.IsNullOrEmpty(result))
                             {
                                 ParseOutput(result, out ulong up, out ulong down);
 
@@ -101,10 +107,6 @@ namespace v2rayN.Handler
                 catch
                 {
                 }
-                finally
-                {
-                    await Task.Delay(1000);
-                }
             }
         }
 
@@ -113,7 +115,7 @@ namespace v2rayN.Handler
             up = 0; down = 0;
             try
             {
-                var trafficItem = Utils.FromJson<TrafficItem>(source);
+                var trafficItem = JsonUtils.Deserialize<TrafficItem>(source);
                 if (trafficItem != null)
                 {
                     up = trafficItem.up;

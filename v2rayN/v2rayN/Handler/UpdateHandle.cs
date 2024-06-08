@@ -6,10 +6,9 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows;
-using v2rayN.Base;
-using v2rayN.Mode;
+using v2rayN.Enums;
+using v2rayN.Models;
 using v2rayN.Resx;
-using v2rayN.Tool;
 
 namespace v2rayN.Handler
 {
@@ -56,7 +55,7 @@ namespace v2rayN.Handler
                             StartInfo = new ProcessStartInfo
                             {
                                 FileName = "v2rayUpgrade.exe",
-                                Arguments = $"\"{fileName}\"",
+                                Arguments = fileName.AppendQuotes(),
                                 WorkingDirectory = Utils.StartupPath()
                             }
                         };
@@ -88,7 +87,10 @@ namespace v2rayN.Handler
                     _updateFunc(false, args.Msg);
 
                     url = args.Url;
-                    _ = askToDownload(downloadHandle, url, true);
+                    AskToDownload(downloadHandle, url, true).ContinueWith(task =>
+                    {
+                        _updateFunc(false, url);
+                    });
                 }
                 else
                 {
@@ -141,7 +143,10 @@ namespace v2rayN.Handler
                     _updateFunc(false, args.Msg);
 
                     url = args.Url;
-                    _ = askToDownload(downloadHandle, url, true);
+                    AskToDownload(downloadHandle, url, true).ContinueWith(task =>
+                    {
+                        _updateFunc(false, url);
+                    });
                 }
                 else
                 {
@@ -203,7 +208,7 @@ namespace v2rayN.Handler
                     //convert
                     if (!Utils.IsNullOrEmpty(item.convertTarget))
                     {
-                        var subConvertUrl = string.IsNullOrEmpty(config.constItem.subConvertUrl) ? Global.SubConvertUrls.FirstOrDefault() : config.constItem.subConvertUrl;
+                        var subConvertUrl = Utils.IsNullOrEmpty(config.constItem.subConvertUrl) ? Global.SubConvertUrls.FirstOrDefault() : config.constItem.subConvertUrl;
                         url = string.Format(subConvertUrl!, Utils.UrlEncode(url));
                         if (!url.Contains("target="))
                         {
@@ -223,7 +228,7 @@ namespace v2rayN.Handler
                     //more url
                     if (Utils.IsNullOrEmpty(item.convertTarget) && !Utils.IsNullOrEmpty(item.moreUrl.TrimEx()))
                     {
-                        if (!Utils.IsNullOrEmpty(result) && Utils.IsBase64String(result))
+                        if (!Utils.IsNullOrEmpty(result) && Utils.IsBase64String(result!))
                         {
                             result = Utils.Base64Decode(result);
                         }
@@ -247,7 +252,7 @@ namespace v2rayN.Handler
                             }
                             if (!Utils.IsNullOrEmpty(result2))
                             {
-                                if (Utils.IsBase64String(result2))
+                                if (Utils.IsBase64String(result2!))
                                 {
                                     result += Utils.Base64Decode(result2);
                                 }
@@ -266,7 +271,7 @@ namespace v2rayN.Handler
                     else
                     {
                         _updateFunc(false, $"{hashCode}{ResUI.MsgGetSubscriptionSuccessfully}");
-                        if (result!.Length < 99)
+                        if (result?.Length < 99)
                         {
                             _updateFunc(false, $"{hashCode}{result}");
                         }
@@ -274,8 +279,8 @@ namespace v2rayN.Handler
                         int ret = ConfigHandler.AddBatchServers(config, result, id, true);
                         if (ret <= 0)
                         {
-                            Utils.SaveLog("FailedImportSubscription");
-                            Utils.SaveLog(result);
+                            Logging.SaveLog("FailedImportSubscription");
+                            Logging.SaveLog(result);
                         }
                         _updateFunc(false,
                             ret > 0
@@ -295,9 +300,6 @@ namespace v2rayN.Handler
             {
                 await UpdateGeoFile("geosite", _config, update);
                 await UpdateGeoFile("geoip", _config, update);
-
-                //await UpdateGeoFile4Singbox("geosite", _config, false, update);
-                //await UpdateGeoFile4Singbox("geoip", _config, true, update);
             });
         }
 
@@ -323,17 +325,17 @@ namespace v2rayN.Handler
                 var result = await (new DownloadHandle()).DownloadStringAsync(url, true, "");
                 if (!Utils.IsNullOrEmpty(result))
                 {
-                    responseHandler(type, result, preRelease);
+                    ResponseHandler(type, result, preRelease);
                 }
                 else
                 {
-                    Utils.SaveLog("StatusCode error: " + url);
+                    Logging.SaveLog("StatusCode error: " + url);
                     return;
                 }
             }
             catch (Exception ex)
             {
-                Utils.SaveLog(ex.Message, ex);
+                Logging.SaveLog(ex.Message, ex);
                 _updateFunc(false, ex.Message);
             }
         }
@@ -341,7 +343,7 @@ namespace v2rayN.Handler
         /// <summary>
         /// 获取V2RayCore版本
         /// </summary>
-        private SemanticVersion getCoreVersion(ECoreType type)
+        private SemanticVersion GetCoreVersion(ECoreType type)
         {
             try
             {
@@ -350,7 +352,7 @@ namespace v2rayN.Handler
                 foreach (string name in coreInfo.coreExes)
                 {
                     string vName = $"{name}.exe";
-                    vName = Utils.GetBinPath(vName, coreInfo.coreType);
+                    vName = Utils.GetBinPath(vName, coreInfo.coreType.ToString());
                     if (File.Exists(vName))
                     {
                         filePath = vName;
@@ -366,7 +368,7 @@ namespace v2rayN.Handler
                 }
 
                 using Process p = new();
-                p.StartInfo.FileName = filePath;
+                p.StartInfo.FileName = filePath.AppendQuotes();
                 p.StartInfo.Arguments = coreInfo.versionArg;
                 p.StartInfo.WorkingDirectory = Utils.StartupPath();
                 p.StartInfo.UseShellExecute = false;
@@ -388,6 +390,7 @@ namespace v2rayN.Handler
 
                     case ECoreType.clash:
                     case ECoreType.clash_meta:
+                    case ECoreType.mihomo:
                         version = Regex.Match(echo, $"v[0-9.]+").Groups[0].Value;
                         break;
 
@@ -399,20 +402,20 @@ namespace v2rayN.Handler
             }
             catch (Exception ex)
             {
-                Utils.SaveLog(ex.Message, ex);
+                Logging.SaveLog(ex.Message, ex);
                 _updateFunc(false, ex.Message);
                 return new SemanticVersion("");
             }
         }
 
-        private void responseHandler(ECoreType type, string gitHubReleaseApi, bool preRelease)
+        private void ResponseHandler(ECoreType type, string gitHubReleaseApi, bool preRelease)
         {
             try
             {
-                var gitHubReleases = Utils.FromJson<List<GitHubRelease>>(gitHubReleaseApi);
-                var gitHubRelease = preRelease ? gitHubReleases!.First() : gitHubReleases!.First(r => r.Prerelease == false);
-                var version = new SemanticVersion(gitHubRelease!.TagName);
-                var body = gitHubRelease!.Body;
+                var gitHubReleases = JsonUtils.Deserialize<List<GitHubRelease>>(gitHubReleaseApi);
+                var gitHubRelease = preRelease ? gitHubReleases?.First() : gitHubReleases?.First(r => r.Prerelease == false);
+                var version = new SemanticVersion(gitHubRelease?.TagName!);
+                var body = gitHubRelease?.Body;
 
                 var coreInfo = LazyConfig.Instance.GetCoreInfo(type);
 
@@ -426,7 +429,7 @@ namespace v2rayN.Handler
                     case ECoreType.Xray:
                     case ECoreType.v2fly_v5:
                         {
-                            curVersion = getCoreVersion(type);
+                            curVersion = GetCoreVersion(type);
                             message = string.Format(ResUI.IsLatestCore, type, curVersion.ToVersionString("v"));
                             string osBit = "64";
                             switch (RuntimeInformation.ProcessArchitecture)
@@ -449,8 +452,9 @@ namespace v2rayN.Handler
                         }
                     case ECoreType.clash:
                     case ECoreType.clash_meta:
+                    case ECoreType.mihomo:
                         {
-                            curVersion = getCoreVersion(type);
+                            curVersion = GetCoreVersion(type);
                             message = string.Format(ResUI.IsLatestCore, type, curVersion);
                             switch (RuntimeInformation.ProcessArchitecture)
                             {
@@ -471,7 +475,7 @@ namespace v2rayN.Handler
                         }
                     case ECoreType.sing_box:
                         {
-                            curVersion = getCoreVersion(type);
+                            curVersion = GetCoreVersion(type);
                             message = string.Format(ResUI.IsLatestCore, type, curVersion.ToVersionString("v"));
                             switch (RuntimeInformation.ProcessArchitecture)
                             {
@@ -524,12 +528,12 @@ namespace v2rayN.Handler
             }
             catch (Exception ex)
             {
-                Utils.SaveLog(ex.Message, ex);
+                Logging.SaveLog(ex.Message, ex);
                 _updateFunc(false, ex.Message);
             }
         }
 
-        private async Task askToDownload(DownloadHandle downloadHandle, string url, bool blAsk)
+        private async Task AskToDownload(DownloadHandle downloadHandle, string url, bool blAsk)
         {
             bool blDownload = false;
             if (blAsk)
@@ -569,7 +573,7 @@ namespace v2rayN.Handler
                         {
                             //Global.coreTypes.ForEach(it =>
                             //{
-                            //    string targetPath = Utils.GetBinPath($"{geoName}.dat", (ECoreType)Enum.Parse(typeof(ECoreType), it));
+                            //    string targetPath = Utile.GetBinPath($"{geoName}.dat", (ECoreType)Enum.Parse(typeof(ECoreType), it));
                             //    File.Copy(fileName, targetPath, true);
                             //});
                             string targetPath = Utils.GetBinPath($"{geoName}.dat");
@@ -593,55 +597,7 @@ namespace v2rayN.Handler
             {
                 _updateFunc(false, args.GetException().Message);
             };
-            await askToDownload(downloadHandle, url, false);
-        }
-
-        private async Task UpdateGeoFile4Singbox(string geoName, Config config, bool needStop, Action<bool, string> update)
-        {
-            _config = config;
-            _updateFunc = update;
-            var url = string.Format(Global.SingboxGeoUrl, geoName);
-
-            DownloadHandle downloadHandle = new();
-            downloadHandle.UpdateCompleted += async (sender2, args) =>
-            {
-                if (args.Success)
-                {
-                    _updateFunc(false, string.Format(ResUI.MsgDownloadGeoFileSuccessfully, geoName));
-                    var coreHandler = Locator.Current.GetService<CoreHandler>();
-
-                    try
-                    {
-                        if (needStop)
-                        {
-                            coreHandler?.CoreStop();
-                            await Task.Delay(3000);
-                        }
-                        string fileName = Utils.GetTempPath(Utils.GetDownloadFileName(url));
-                        if (File.Exists(fileName))
-                        {
-                            string targetPath = Utils.GetConfigPath($"{geoName}.db");
-                            File.Copy(fileName, targetPath, true);
-
-                            File.Delete(fileName);
-                        }
-                        if (needStop) coreHandler?.LoadCore();
-                    }
-                    catch (Exception ex)
-                    {
-                        _updateFunc(false, ex.Message);
-                    }
-                }
-                else
-                {
-                    _updateFunc(false, args.Msg);
-                }
-            };
-            downloadHandle.Error += (sender2, args) =>
-            {
-                _updateFunc(false, args.GetException().Message);
-            };
-            await askToDownload(downloadHandle, url, false);
+            await AskToDownload(downloadHandle, url, false);
         }
 
         #endregion private

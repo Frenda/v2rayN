@@ -3,9 +3,8 @@ using ReactiveUI.Fody.Helpers;
 using Splat;
 using System.Reactive;
 using System.Windows;
-using v2rayN.Base;
 using v2rayN.Handler;
-using v2rayN.Mode;
+using v2rayN.Models;
 using v2rayN.Resx;
 
 namespace v2rayN.ViewModels
@@ -63,7 +62,7 @@ namespace v2rayN.ViewModels
                 SaveRules();
             });
 
-            Utils.SetDarkBorder(view, _config.uiItem.colorModeDark);
+            Utils.SetDarkBorder(view, _config.uiItem.followSystemTheme ? !Utils.IsLightTheme() : _config.uiItem.colorModeDark);
         }
 
         private void SaveRules()
@@ -95,7 +94,7 @@ namespace v2rayN.ViewModels
 
             if (!hasRule)
             {
-                UI.ShowWarning(string.Format(ResUI.RoutingRuleDetailRequiredTips, "Port/Protocol/Domain/IP/Process"));
+                _noticeHandler?.Enqueue(string.Format(ResUI.RoutingRuleDetailRequiredTips, "Port/Protocol/Domain/IP/Process"));
                 return;
             }
             //_noticeHandler?.Enqueue(ResUI.OperationSuccess);

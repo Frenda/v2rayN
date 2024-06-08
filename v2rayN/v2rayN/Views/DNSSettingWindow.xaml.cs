@@ -2,7 +2,7 @@
 using System.Reactive.Disposables;
 using System.Windows;
 using v2rayN.Handler;
-using v2rayN.Mode;
+using v2rayN.Models;
 using v2rayN.ViewModels;
 
 namespace v2rayN.Views
@@ -51,17 +51,12 @@ namespace v2rayN.Views
 
         private void linkDnsObjectDoc_Click(object sender, RoutedEventArgs e)
         {
-            Utils.ProcessStart("https://www.v2fly.org/config/dns.html#dnsobject");
+            Utils.ProcessStart("https://xtls.github.io/config/dns.html#dnsobject");
         }
 
         private void linkDnsSingboxObjectDoc_Click(object sender, RoutedEventArgs e)
         {
             Utils.ProcessStart("https://sing-box.sagernet.org/zh/configuration/dns/");
-        }
-
-        private void btnCancel_Click(object sender, RoutedEventArgs e)
-        {
-            this.Close();
         }
     }
 }
