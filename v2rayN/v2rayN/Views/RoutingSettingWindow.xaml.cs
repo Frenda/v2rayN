@@ -2,8 +2,6 @@
 using System.Reactive.Disposables;
 using System.Windows;
 using System.Windows.Input;
-using v2rayN.Models;
-using v2rayN.ViewModels;
 
 namespace v2rayN.Views
 {
@@ -13,23 +11,15 @@ namespace v2rayN.Views
         {
             InitializeComponent();
 
-            // 设置窗口的尺寸不大于屏幕的尺寸
-            if (this.Width > SystemParameters.WorkArea.Width)
-            {
-                this.Width = SystemParameters.WorkArea.Width;
-            }
-            if (this.Height > SystemParameters.WorkArea.Height)
-            {
-                this.Height = SystemParameters.WorkArea.Height;
-            }
-
             this.Owner = Application.Current.MainWindow;
             this.Closing += RoutingSettingWindow_Closing;
             this.PreviewKeyDown += RoutingSettingWindow_PreviewKeyDown;
             lstRoutings.SelectionChanged += lstRoutings_SelectionChanged;
             lstRoutings.MouseDoubleClick += LstRoutings_MouseDoubleClick;
+            menuRoutingAdvancedSelectAll.Click += menuRoutingAdvancedSelectAll_Click;
+            btnCancel.Click += btnCancel_Click;
 
-            ViewModel = new RoutingSettingViewModel(this);
+            ViewModel = new RoutingSettingViewModel(UpdateViewHandler);
 
             Global.DomainStrategies.ForEach(it =>
             {
@@ -49,24 +39,10 @@ namespace v2rayN.Views
                 this.OneWayBind(ViewModel, vm => vm.RoutingItems, v => v.lstRoutings.ItemsSource).DisposeWith(disposables);
                 this.Bind(ViewModel, vm => vm.SelectedSource, v => v.lstRoutings.SelectedItem).DisposeWith(disposables);
 
-                this.Bind(ViewModel, vm => vm.enableRoutingAdvanced, v => v.togenableRoutingAdvanced.IsChecked).DisposeWith(disposables);
                 this.Bind(ViewModel, vm => vm.domainStrategy, v => v.cmbdomainStrategy.Text).DisposeWith(disposables);
                 this.Bind(ViewModel, vm => vm.domainMatcher, v => v.cmbdomainMatcher.Text).DisposeWith(disposables);
                 this.Bind(ViewModel, vm => vm.domainStrategy4Singbox, v => v.cmbdomainStrategy4Singbox.Text).DisposeWith(disposables);
 
-                this.Bind(ViewModel, vm => vm.ProxyDomain, v => v.txtProxyDomain.Text).DisposeWith(disposables);
-                this.Bind(ViewModel, vm => vm.ProxyIP, v => v.txtProxyIP.Text).DisposeWith(disposables);
-                this.Bind(ViewModel, vm => vm.DirectDomain, v => v.txtDirectDomain.Text).DisposeWith(disposables);
-                this.Bind(ViewModel, vm => vm.DirectIP, v => v.txtDirectIP.Text).DisposeWith(disposables);
-                this.Bind(ViewModel, vm => vm.BlockDomain, v => v.txtBlockDomain.Text).DisposeWith(disposables);
-                this.Bind(ViewModel, vm => vm.BlockIP, v => v.txtBlockIP.Text).DisposeWith(disposables);
-
-                this.OneWayBind(ViewModel, vm => vm.enableRoutingBasic, v => v.menuRoutingBasic.Visibility).DisposeWith(disposables);
-                this.OneWayBind(ViewModel, vm => vm.enableRoutingAdvanced, v => v.menuRoutingAdvanced.Visibility).DisposeWith(disposables);
-                this.OneWayBind(ViewModel, vm => vm.enableRoutingBasic, v => v.tabBasic.Visibility).DisposeWith(disposables);
-                this.OneWayBind(ViewModel, vm => vm.enableRoutingAdvanced, v => v.tabAdvanced.Visibility).DisposeWith(disposables);
-
-                this.BindCommand(ViewModel, vm => vm.RoutingBasicImportRulesCmd, v => v.menuRoutingBasicImportRules).DisposeWith(disposables);
                 this.BindCommand(ViewModel, vm => vm.RoutingAdvancedAddCmd, v => v.menuRoutingAdvancedAdd).DisposeWith(disposables);
                 this.BindCommand(ViewModel, vm => vm.RoutingAdvancedAddCmd, v => v.menuRoutingAdvancedAdd2).DisposeWith(disposables);
                 this.BindCommand(ViewModel, vm => vm.RoutingAdvancedRemoveCmd, v => v.menuRoutingAdvancedRemove).DisposeWith(disposables);
@@ -76,6 +52,30 @@ namespace v2rayN.Views
 
                 this.BindCommand(ViewModel, vm => vm.SaveCmd, v => v.btnSave).DisposeWith(disposables);
             });
+            WindowsUtils.SetDarkBorder(this, AppHandler.Instance.Config.UiItem.FollowSystemTheme ? WindowsUtils.IsDarkTheme() : AppHandler.Instance.Config.UiItem.ColorModeDark);
+        }
+
+        private async Task<bool> UpdateViewHandler(EViewAction action, object? obj)
+        {
+            switch (action)
+            {
+                case EViewAction.CloseWindow:
+                    this.DialogResult = true;
+                    break;
+
+                case EViewAction.ShowYesNo:
+                    if (UI.ShowYesNo(ResUI.RemoveRules) == MessageBoxResult.No)
+                    {
+                        return false;
+                    }
+                    break;
+
+                case EViewAction.RoutingRuleSettingWindow:
+
+                    if (obj is null) return false;
+                    return (new RoutingRuleSettingWindow((RoutingItem)obj)).ShowDialog() ?? false;
+            }
+            return await Task.FromResult(true);
         }
 
         private void RoutingSettingWindow_Closing(object? sender, System.ComponentModel.CancelEventArgs e)
@@ -88,11 +88,6 @@ namespace v2rayN.Views
 
         private void RoutingSettingWindow_PreviewKeyDown(object sender, KeyEventArgs e)
         {
-            if (ViewModel?.enableRoutingBasic ?? false)
-            {
-                return;
-            }
-
             if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
             {
                 if (e.Key == Key.A)
@@ -106,7 +101,7 @@ namespace v2rayN.Views
             }
             else if (e.Key == Key.Delete)
             {
-                ViewModel?.RoutingAdvancedRemove();
+                ViewModel?.RoutingAdvancedRemoveAsync();
             }
         }
 
@@ -122,7 +117,7 @@ namespace v2rayN.Views
 
         private void LstRoutings_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            ViewModel?.RoutingAdvancedEdit(false);
+            ViewModel?.RoutingAdvancedEditAsync(false);
         }
 
         private void linkdomainStrategy_Click(object sender, System.Windows.RoutedEventArgs e)

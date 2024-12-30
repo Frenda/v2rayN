@@ -2,9 +2,6 @@
 using System.Reactive.Disposables;
 using System.Windows;
 using System.Windows.Input;
-using v2rayN.Enums;
-using v2rayN.Models;
-using v2rayN.ViewModels;
 
 namespace v2rayN.Views
 {
@@ -14,23 +11,16 @@ namespace v2rayN.Views
         {
             InitializeComponent();
 
-            // 设置窗口的尺寸不大于屏幕的尺寸
-            if (this.Width > SystemParameters.WorkArea.Width)
-            {
-                this.Width = SystemParameters.WorkArea.Width;
-            }
-            if (this.Height > SystemParameters.WorkArea.Height)
-            {
-                this.Height = SystemParameters.WorkArea.Height;
-            }
-
             this.Owner = Application.Current.MainWindow;
             this.Loaded += Window_Loaded;
             this.PreviewKeyDown += RoutingRuleSettingWindow_PreviewKeyDown;
             lstRules.SelectionChanged += lstRules_SelectionChanged;
             lstRules.MouseDoubleClick += LstRules_MouseDoubleClick;
+            menuRuleSelectAll.Click += menuRuleSelectAll_Click;
+            btnBrowseCustomIcon.Click += btnBrowseCustomIcon_Click;
+            btnBrowseCustomRulesetPath4Singbox.Click += btnBrowseCustomRulesetPath4Singbox_Click;
 
-            ViewModel = new RoutingRuleSettingViewModel(routingItem, this);
+            ViewModel = new RoutingRuleSettingViewModel(routingItem, UpdateViewHandler);
             Global.DomainStrategies.ForEach(it =>
             {
                 cmbdomainStrategy.Items.Add(it);
@@ -46,14 +36,14 @@ namespace v2rayN.Views
                 this.OneWayBind(ViewModel, vm => vm.RulesItems, v => v.lstRules.ItemsSource).DisposeWith(disposables);
                 this.Bind(ViewModel, vm => vm.SelectedSource, v => v.lstRules.SelectedItem).DisposeWith(disposables);
 
-                this.Bind(ViewModel, vm => vm.SelectedRouting.remarks, v => v.txtRemarks.Text).DisposeWith(disposables);
-                this.Bind(ViewModel, vm => vm.SelectedRouting.domainStrategy, v => v.cmbdomainStrategy.Text).DisposeWith(disposables);
-                this.Bind(ViewModel, vm => vm.SelectedRouting.domainStrategy4Singbox, v => v.cmbdomainStrategy4Singbox.Text).DisposeWith(disposables);
+                this.Bind(ViewModel, vm => vm.SelectedRouting.Remarks, v => v.txtRemarks.Text).DisposeWith(disposables);
+                this.Bind(ViewModel, vm => vm.SelectedRouting.DomainStrategy, v => v.cmbdomainStrategy.Text).DisposeWith(disposables);
+                this.Bind(ViewModel, vm => vm.SelectedRouting.DomainStrategy4Singbox, v => v.cmbdomainStrategy4Singbox.Text).DisposeWith(disposables);
 
-                this.Bind(ViewModel, vm => vm.SelectedRouting.url, v => v.txtUrl.Text).DisposeWith(disposables);
-                this.Bind(ViewModel, vm => vm.SelectedRouting.customIcon, v => v.txtCustomIcon.Text).DisposeWith(disposables);
-                this.Bind(ViewModel, vm => vm.SelectedRouting.customRulesetPath4Singbox, v => v.txtCustomRulesetPath4Singbox.Text).DisposeWith(disposables);
-                this.Bind(ViewModel, vm => vm.SelectedRouting.sort, v => v.txtSort.Text).DisposeWith(disposables);
+                this.Bind(ViewModel, vm => vm.SelectedRouting.Url, v => v.txtUrl.Text).DisposeWith(disposables);
+                this.Bind(ViewModel, vm => vm.SelectedRouting.CustomIcon, v => v.txtCustomIcon.Text).DisposeWith(disposables);
+                this.Bind(ViewModel, vm => vm.SelectedRouting.CustomRulesetPath4Singbox, v => v.txtCustomRulesetPath4Singbox.Text).DisposeWith(disposables);
+                this.Bind(ViewModel, vm => vm.SelectedRouting.Sort, v => v.txtSort.Text).DisposeWith(disposables);
 
                 this.BindCommand(ViewModel, vm => vm.RuleAddCmd, v => v.menuRuleAdd).DisposeWith(disposables);
                 this.BindCommand(ViewModel, vm => vm.ImportRulesFromFileCmd, v => v.menuImportRulesFromFile).DisposeWith(disposables);
@@ -70,6 +60,59 @@ namespace v2rayN.Views
 
                 this.BindCommand(ViewModel, vm => vm.SaveCmd, v => v.btnSave).DisposeWith(disposables);
             });
+            WindowsUtils.SetDarkBorder(this, AppHandler.Instance.Config.UiItem.FollowSystemTheme ? WindowsUtils.IsDarkTheme() : AppHandler.Instance.Config.UiItem.ColorModeDark);
+        }
+
+        private async Task<bool> UpdateViewHandler(EViewAction action, object? obj)
+        {
+            switch (action)
+            {
+                case EViewAction.CloseWindow:
+                    this.DialogResult = true;
+                    break;
+
+                case EViewAction.ShowYesNo:
+
+                    if (UI.ShowYesNo(ResUI.RemoveServer) == MessageBoxResult.No)
+                    {
+                        return false;
+                    }
+                    break;
+
+                case EViewAction.AddBatchRoutingRulesYesNo:
+
+                    if (UI.ShowYesNo(ResUI.AddBatchRoutingRulesYesNo) == MessageBoxResult.No)
+                    {
+                        return false;
+                    }
+                    break;
+
+                case EViewAction.RoutingRuleDetailsWindow:
+
+                    if (obj is null) return false;
+                    return (new RoutingRuleDetailsWindow((RulesItem)obj)).ShowDialog() ?? false;
+
+                case EViewAction.ImportRulesFromFile:
+
+                    if (UI.OpenFileDialog(out string fileName, "Rules|*.json|All|*.*") != true)
+                    {
+                        return false;
+                    }
+                    ViewModel?.ImportRulesFromFileAsync(fileName);
+                    break;
+
+                case EViewAction.SetClipboardData:
+                    if (obj is null) return false;
+                    WindowsUtils.SetClipboardData((string)obj);
+                    break;
+
+                case EViewAction.ImportRulesFromClipboard:
+                    var clipboardData = WindowsUtils.GetClipboardData();
+                    ViewModel?.ImportRulesFromClipboardAsync(clipboardData);
+                    break;
+            }
+
+            return await Task.FromResult(true);
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -87,7 +130,7 @@ namespace v2rayN.Views
                 }
                 else if (e.Key == Key.C)
                 {
-                    ViewModel?.RuleExportSelected();
+                    ViewModel?.RuleExportSelectedAsync();
                 }
             }
             else
@@ -110,7 +153,7 @@ namespace v2rayN.Views
                 }
                 else if (e.Key == Key.Delete)
                 {
-                    ViewModel?.RuleRemove();
+                    ViewModel?.RuleRemoveAsync();
                 }
             }
         }
@@ -122,7 +165,7 @@ namespace v2rayN.Views
 
         private void LstRules_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            ViewModel?.RuleEdit(false);
+            ViewModel?.RuleEditAsync(false);
         }
 
         private void menuRuleSelectAll_Click(object sender, System.Windows.RoutedEventArgs e)
